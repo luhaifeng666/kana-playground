@@ -1,8 +1,8 @@
 /*
  * @Author: haifeng.lu haifeng.lu@ly.com
  * @Date: 2023-02-21 16:08:49
- * @LastEditors: haifeng.lu
- * @LastEditTime: 2023-02-22 11:32:02
+ * @LastEditors: luhaifeng666
+ * @LastEditTime: 2023-02-23 00:36:10
  * @Description: 
  */
 
@@ -25,7 +25,7 @@ const DULL_KANA_LOWER_STR = 'がぎごげござじずぜぞだぢづでどばび
 const AO_KANA_LOWER_STR = 'きゃ,きゅ,きょ,しゃ,しゅ,しょ,ちゃ,ちゅ,ちょ,にゃ,にゅ,にょ,ひゃ,ひゅ,ひょ,みゃ,みゅ,みょ,りゃ,りゅ,りょ'
 const AO_DULL_KANA_LOWER_STR = 'ぎゃ,ぎゅ,ぎょ,じゃ,じゅ,じょ,ぢゃ,ぢゅ,ぢょ,びゃ,びゅ,びょ,ぴゃ,ぴゅ,ぴょ'
 //  片假名
-const KANA_UPPER_STR = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロン'
+const KANA_UPPER_STR = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン'
 const DULL_KANA_UPPER_STR = 'ガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポ'
 const AO_KANA_UPPER_STR = 'キャ,キュ,キョ,シャ,シュ,ショ,チャ,チュ,チョ,ニャ,ニュ,ニョ,ヒャ,ヒュ,ヒョ,ミャ,ミュ,ミョ,リャ,リュ,リョ'
 const AO_DULL_KANA_UPPER_STR = 'ギャ,ギュ,ギョ,ジャ,ジュ,ジョ,ヂャ,ヂュ,ヂョ,ビャ,ビュ,ビョ,ピャ,ピュ,ピョ'
