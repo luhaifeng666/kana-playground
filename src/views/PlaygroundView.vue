@@ -1,8 +1,8 @@
 <!--
  * @Author: luhaifeng666 youzui@hotmail.com
  * @Date: 2023-02-21 11:21:46
- * @LastEditors: haifeng.lu
- * @LastEditTime: 2023-02-22 15:19:48
+ * @LastEditors: luhaifeng666
+ * @LastEditTime: 2023-02-22 20:06:34
  * @Description: 
 -->
 <template>
@@ -148,7 +148,8 @@ const firstIsRight = computed(() => {
 })
 const secondIsRight = computed(() => {
   const { roma } = currentKana.value
-  return typeof(roma) === 'string' ? secondAnswer.value === roma : roma.includes(secondAnswer.value)
+  const answer = secondAnswer.value.toLowerCase()
+  return typeof(roma) === 'string' ? answer === roma : roma.includes(answer)
 })
 const answerValidation = computed(() => firstIsRight.value && secondIsRight.value)
 
