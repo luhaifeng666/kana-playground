@@ -2,7 +2,7 @@
  * @Author: luhaifeng666 youzui@hotmail.com
  * @Date: 2023-02-20 21:13:47
  * @LastEditors: haifeng.lu
- * @LastEditTime: 2023-02-21 16:23:26
+ * @LastEditTime: 2023-02-22 17:19:30
  * @Description: 
 -->
 
@@ -17,7 +17,8 @@
           :class="[...LINK_STYLE, item.name === route.name ? 'text-green-400' : '']"
           :is="item.isNormal ? 'a' : RouterLink"
           v-bind="{
-            [item.isNormal ? 'href' : 'to']: item.link
+            [item.isNormal ? 'href' : 'to']: item.link,
+            ...(item.isNormal ? { target: '_blank' } : {})
           }"
         >
           <template v-if="!item.isNormal">
