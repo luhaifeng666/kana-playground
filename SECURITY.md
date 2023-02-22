@@ -1,11 +1,3 @@
-<!--
- * @Author: luhaifeng666 youzui@hotmail.com
- * @Date: 2023-02-22 20:27:32
- * @LastEditors: luhaifeng666
- * @LastEditTime: 2023-02-22 20:28:51
- * @Description: 
--->
-
 MIT License
 
 Copyright (c) 2023 Haifeng Lu <youzui@hotmail.com>
