@@ -2,7 +2,7 @@
  * @Author: haifeng.lu haifeng.lu@ly.com
  * @Date: 2023-02-21 16:08:49
  * @LastEditors: haifeng.lu
- * @LastEditTime: 2023-02-21 18:37:41
+ * @LastEditTime: 2023-02-22 11:32:02
  * @Description: 
  */
 
@@ -14,7 +14,7 @@ export const MENU_ITEMS = [
 ]
 
 interface Kana {
-  uperCase: string
+  upperCase: string
   lowerCase: string
   roma: Array<string> | string
 }
@@ -45,7 +45,7 @@ const kanaGenerator = (lower:string, upper:string, roma:string, splitor = '') =>
   const upperList = upper.split(splitor)
   const romaList = roma.split(',')
   return [...res, {
-    uperCase: upperList[index],
+    upperCase: upperList[index],
     lowerCase: item,
     roma: romaList[index].includes('/') ? romaList[index].split('/') : romaList[index]
   }]
