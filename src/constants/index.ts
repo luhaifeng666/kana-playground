@@ -2,7 +2,7 @@
  * @Author: haifeng.lu haifeng.lu@ly.com
  * @Date: 2023-02-21 16:08:49
  * @LastEditors: luhaifeng666
- * @LastEditTime: 2023-02-23 10:36:38
+ * @LastEditTime: 2023-02-23 16:15:04
  * @Description: 
  */
 
@@ -10,10 +10,11 @@
 export const MENU_ITEMS = [
   { text: '练习', link: '/playground', isNormal: false, name: 'playground' },
   { text: '音图', link: '/kana', isNormal: false, name: 'kana' },
+  { text: '记录', link: '/record', isNormal: false, name: 'record' },
   { text: '', link: 'https://github.com/luhaifeng666/kana-playground', isNormal: true, name: '' }
 ]
 
-interface Kana {
+export interface Kana {
   upperCase: string
   lowerCase: string
   roma: Array<string> | string
@@ -62,3 +63,10 @@ export const AO: Array<Kana> = kanaGenerator(AO_KANA_LOWER_STR, AO_KANA_UPPER_ST
 
 //  定义拗浊音
 export const AO_DULL: Array<Kana> = kanaGenerator(AO_DULL_KANA_LOWER_STR, AO_DULL_KANA_UPPER_STR, AO_DULL_KANA_ROMA_STR, ',')
+
+// 定义模式
+export const PATTERN: Array<{ name: string, type: string }> = [
+  { name: '平假名', type: 'lowerCase' },
+  { name: '片假名', type: 'upperCase' },
+  { name: '罗马音', type: 'roma' }
+]
