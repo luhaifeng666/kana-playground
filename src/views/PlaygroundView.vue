@@ -2,7 +2,7 @@
  * @Author: luhaifeng666 youzui@hotmail.com
  * @Date: 2023-02-21 11:21:46
  * @LastEditors: luhaifeng666
- * @LastEditTime: 2023-02-23 17:23:29
+ * @LastEditTime: 2023-02-23 21:13:20
  * @Description: 
 -->
 <template>
@@ -196,7 +196,7 @@ const handleNext = () => {
   }
 }
 // 获取随机数
-const getRandomNum = (baseNum: number): number => Math.ceil(Math.random() * baseNum)
+const getRandomNum = (baseNum: number): number => Math.ceil(Math.random() * (baseNum === kanas.length ? baseNum - 1 : baseNum))
 // 监听 enter 按键事件
 const handleKeyDown = (e: KeyboardEvent) => {
   if (e && e.keyCode === 13) handleNext()
