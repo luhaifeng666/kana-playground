@@ -1,27 +1,27 @@
 <!--
  * @Author: luhaifeng666 youzui@hotmail.com
  * @Date: 2023-02-21 11:21:46
- * @LastEditors: luhaifeng666
- * @LastEditTime: 2023-02-22 20:06:34
+ * @LastEditors: haifeng.lu
+ * @LastEditTime: 2023-02-23 14:58:24
  * @Description: 
 -->
 <template>
   <!-- 进度条 -->
   <div class="text-white" v-if="processVisible">
-    <div class="w-40 relative mb-1 p_progress">
-      <div class="bg-green-400 h-2 absolute -top-0.5 left-0 rounded" :style="processWidth"></div>
+    <div w="40" mb="1" position="relative" class="p_progress">
+      <div bg="green-400" h="2" position="absolute" top="-0.5" left="0" border="rounded" :style="processWidth"></div>
     </div>
-    <p class="text-center">
-      <span class="text-green-400">{{ currentIndex + 1 }}</span><span class="mx-1">/</span><span>{{ count }}</span>
+    <p text="center">
+      <span text="green-400">{{ currentIndex + 1 }}</span><span mx="1">/</span><span>{{ count }}</span>
     </p>
   </div>
 
   <!-- 题目 -->
-  <div class="flex items-center justify-center flex-col">
+  <div class="flex-center" flex="col">
     <p class="text-white text-4xl">{{ currentKana.lowerCase }}</p>
     <!-- 输入框 -->
-    <div class="my-4 flex items-center justify-center">
-      <div class="w-30 -mt-4 text-center text-white hover:text-green-400 cursor-pointer transform transition hover:-translate-x-1" v-if="processVisible">
+    <div class="my-4 flex-center">
+      <div class="switch-btn hover:(text-green-400 -translate-x-1)" v-if="processVisible">
         <ChevronLeft :size="40"/>
       </div>
 
@@ -33,10 +33,9 @@
           autofocus
           ref="firstAnswerInput"
           lang="fr"
-          class="w-full h-18 rounded-lg bg-zinc-900 outline-none text-center text-white text-xl mb-2 border-b-3 border-b-zinc-700"
-          :class="`${!!firstAnswer && `text_${firstIsRight ? 'right' : 'error'}`} ${ firstShake ? 'shake' : '' }`"
+          :class="['signle-inputbox', !!firstAnswer ? `text_${firstIsRight ? 'right' : 'error'}` : '', firstShake ? 'shake' : '']"
         />
-        <p class="text-xs text-zinc-400 text-center select-none">片假名</p>
+        <p text="xs zinc-400 center" select="none">片假名</p>
       </div>
 
       <div class="w-18">
@@ -44,32 +43,25 @@
           v-model="secondAnswer"
           maxlength="3"
           type="text"
-          class="w-full h-18 rounded-lg bg-zinc-900 outline-none text-center text-white text-xl mb-2 border-b-3 border-b-zinc-700"
-          :class="`${!!secondAnswer && `text_${secondIsRight ? 'right' : 'error'}`} ${ secondShake ? 'shake' : '' }`"
+          :class="['signle-inputbox', !!secondAnswer ? `text_${secondIsRight ? 'right' : 'error'}` : '', secondShake ? 'shake' : '']"
         />
-        <p class="text-xs text-zinc-400 text-center select-none">罗马音</p>
+        <p text="xs zinc-400 center" select="none">罗马音</p>
       </div>
 
-      <div class="w-30 -mt-4 text-center text-white hover:text-green-400 cursor-pointer transform transition hover:translate-x-1" v-if="processVisible" @click="handleNext">
+      <div class="switch-btn hover:(text-green-400 translate-x-1)" v-if="processVisible" @click="handleNext">
         <ChevronRight :size="40"/>
       </div>
     </div>
-    <p class="text-white select-none">请写出题目相对应的 <strong class="text-green-400">假名/罗马音</strong></p>
-    <p class="text-zinc-500 text-xs mt-2 mb-6">Tips: 可通过按下键盘的 <span class="rounded p-1 bg-zinc-900 text-green-400 text-xs">Enter</span> 键切换下一个</p>
+    <p text="white" select="none">请写出题目相对应的 <strong text="green-400">假名/罗马音</strong></p>
+    <p text="zinc-500 xs" mt="2" mb="6">Tips: 可通过按下键盘的 <span border="rounded" p="1" bg="zinc-900" text="xs green-400">Enter</span> 键切换下一个</p>
     
     <template v-if="!processVisible">
-      <div class="flex items-center justify-center flex-col cursor-pointer" @click="handleNext">
-        <span class="text-zinc-400 text-xs mb-2 border-b-1 border-b-zinc-500 bg-zinc-700 p-1 rounded-sm">ENTER</span>
-        <p class="text-xl text-white text-center select-none flex items-center justify-center hover:text-green-400">下一个 <ArrowRight class="ml-2" /></p>
+      <div class="flex-center flex-col cursor-pointer" @click="handleNext">
+        <span text="zinc-400 xs" border="b-1 b-zinc-500 rounded-sm" mb="2" bg="zinc-700" p="1">ENTER</span>
+        <p class="flex-center" text="xl white center" hover="text-green-400" select="none">下一个 <ArrowRight class="ml-2" /></p>
       </div>
     </template>
   </div>
-
-  <!-- 前后选择 -->
-  <!-- <div class="w-full flex justify-between items-center">
-    <button v-show="!!currentIndex" class="text-zinc-400 text-sm mb-2 border-b-3 border-b-zinc-500 bg-zinc-700 px-4 py-1 rounded-sm hover:bg-green-400 hover:text-white transition cursor-pointer transform hover:scale-100 hover:-translate-y-1">上一个</button>
-    <button v-show="currentIndex < randomKanas.length - 1" @click="handleNext" class="text-zinc-400 text-sm mb-2 border-b-3 border-b-zinc-500 bg-zinc-700 px-4 py-1 rounded-sm hover:bg-green-400 hover:text-white transition cursor-pointer transform hover:scale-100 hover:-translate-y-1">下一个</button>
-  </div> -->
 </template>
 
 <script lang="ts" setup>
@@ -148,7 +140,7 @@ const firstIsRight = computed(() => {
 })
 const secondIsRight = computed(() => {
   const { roma } = currentKana.value
-  const answer = secondAnswer.value.toLowerCase()
+  const answer = secondAnswer.value?.toLowerCase()
   return typeof(roma) === 'string' ? answer === roma : roma.includes(answer)
 })
 const answerValidation = computed(() => firstIsRight.value && secondIsRight.value)
@@ -179,7 +171,6 @@ const handleKeyDown = (e: KeyboardEvent) => {
 }
 </script>
 
-<!-- TODO 改成windi的形式 -->
 <!-- TODO 样式合并 -->
 <style scoped>
 .p_progress::before {

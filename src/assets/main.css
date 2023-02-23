@@ -1,5 +1,5 @@
-.text_error { color: #dc2626; border-color: #dc2626; }
-.text_right { color: #34d399; border-color: #34d399; }
+.text_error { @apply text-red-600 border-red-600; }
+.text_right { @apply text-green-400 border-green-400; }
 
 .shake {
   transform: translateX(0);

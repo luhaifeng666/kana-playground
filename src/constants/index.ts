@@ -2,14 +2,14 @@
  * @Author: haifeng.lu haifeng.lu@ly.com
  * @Date: 2023-02-21 16:08:49
  * @LastEditors: luhaifeng666
- * @LastEditTime: 2023-02-23 00:36:10
+ * @LastEditTime: 2023-02-23 10:36:38
  * @Description: 
  */
 
 //  定义菜单项
 export const MENU_ITEMS = [
   { text: '练习', link: '/playground', isNormal: false, name: 'playground' },
-  { text: '50音图', link: '/kana', isNormal: false, name: 'kana' },
+  { text: '音图', link: '/kana', isNormal: false, name: 'kana' },
   { text: '', link: 'https://github.com/luhaifeng666/kana-playground', isNormal: true, name: '' }
 ]
 
