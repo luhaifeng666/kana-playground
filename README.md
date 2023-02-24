@@ -6,9 +6,9 @@
  * @Description: 
 -->
 
-<div align="center">
+<p align="center">
   <img width=100 src="https://user-images.githubusercontent.com/9375823/221082826-3d3956df-d400-4cc6-a884-e5129418242c.png" />
-<div>
+<p>
 
 <h1 align="center">Kana-playground</h1>
 
