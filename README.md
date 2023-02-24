@@ -2,11 +2,11 @@
  * @Author: luhaifeng666 youzui@hotmail.com
  * @Date: 2023-02-20 21:13:47
  * @LastEditors: luhaifeng666
- * @LastEditTime: 2023-02-24 11:19:06
+ * @LastEditTime: 2023-02-24 11:26:31
  * @Description: 
 -->
 
-<h1 align="center"><img width=100 src="https://user-images.githubusercontent.com/9375823/221082826-3d3956df-d400-4cc6-a884-e5129418242c.png" /></h1>
+<h2 align="center"><img width=100 src="https://user-images.githubusercontent.com/9375823/221082826-3d3956df-d400-4cc6-a884-e5129418242c.png" /></h2>
 
 <h1 align="center">Kana-playground</h1>
 
