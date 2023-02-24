@@ -2,7 +2,7 @@
  * @Author: luhaifeng666 youzui@hotmail.com
  * @Date: 2023-02-20 21:13:47
  * @LastEditors: luhaifeng666
- * @LastEditTime: 2023-02-24 11:29:14
+ * @LastEditTime: 2023-02-24 14:20:15
  * @Description: 
 -->
 
@@ -11,9 +11,9 @@
 <p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/vue-%5E3.2.45-green" />
-  <img src="https://img.shields.io/badge/vite-%5E4.0.0-green" />
-  <img src="https://img.shields.io/badge/windicss-%5E3.5.6-blue" />
+  <img src="https://img.shields.io/badge/Vue-%5E3.2.45-green" />
+  <img src="https://img.shields.io/badge/Vite-%5E4.0.0-green" />
+  <img src="https://img.shields.io/badge/Windicss-%5E3.5.6-blue" />
 </p>
 
 <h1 align="center">Kana-playground</h1>
@@ -31,3 +31,7 @@
 - [ ] `挑战赛功能`：
   - [ ] 随机抽取指定数目的假名进行练习，并计时&打分；
 - [ ] `50音图`
+
+<!-- <a href="https://www.buymeacoffee.com/luhaifeng">
+  <img src="https://user-images.githubusercontent.com/9375823/221101101-69f1b3b6-91e1-4f98-8997-3c2396bf4d54.png" width="200" />
+</a> -->
