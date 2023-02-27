@@ -1,14 +1,14 @@
 <!--
  * @Author: luhaifeng666 youzui@hotmail.com
  * @Date: 2023-02-21 11:21:35
- * @LastEditors: luhaifeng666
- * @LastEditTime: 2023-02-27 15:06:00
+ * @LastEditors: haifeng.lu
+ * @LastEditTime: 2023-02-27 18:02:52
  * @Description: 
 -->
 <template>
-  <div overflow="scroll" w="full" id="kana_view">
+  <div overflow="scroll" w="full" id="kana_view" ref="kanaViewEl">
     <kana-container v-for="(content, index) in tableData" :left-title="content.mainTitle" :right-title="content.subTitle" :key="index">
-      <div display="flex" items="end" flex="col" growth="0" v-if="content.mainContent && content.mainContent.length">
+      <div display="flex" items="end" flex="col" growth="0" pb="8" v-if="content.mainContent && content.mainContent.length">
         <div v-for="(line, lineNum) in content.mainContent" :key="lineNum" display="flex">
           <div
             v-for="({ name, roma, upperCase, lowerCase }, index) in line"
@@ -31,7 +31,7 @@
         </div>
       </div>
       <template #right>
-        <div text="white sm" leading="relaxed">
+        <div text="white sm justify" leading="relaxed">
           <template v-if="content.subContent && content.subContent.length">
             <p display="flex" items="start" justify="start" v-for="(sub, index) in content.subContent" :key="index">
               <span mr="2">{{ index + 1 }}.</span>
@@ -42,13 +42,28 @@
       </template>
     </kana-container>
   </div>
+
+  <SlideTop @scroll="handleScrollTop" v-show="arrowVisible"/>
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
+import type { Ref } from 'vue'
 import KanaContainer from './components/KanaContainer.vue'
+import SlideTop from '@/components/SlideTop.vue'
 import { KANA_FIFTY, COLS, DULL, AO, AO_DULL } from '@/constants'
 import type { Kana } from '@/constants'
+
+const kanaViewEl: Ref<HTMLElement|null> = ref(null)
+const arrowVisible: Ref<boolean> = ref(false)
+
+onMounted(() => {
+  kanaViewEl.value && kanaViewEl.value.addEventListener('scroll', scrollHandler)
+})
+
+onBeforeUnmount(() => {
+  kanaViewEl.value && kanaViewEl.value.removeEventListener('scroll', scrollHandler)
+})
 
 // 格式化段数
 const cols = computed(() => [{}, ...COLS])
@@ -157,6 +172,16 @@ const tableData = [
 
 // 格式化罗马音
 const getRoma = (roma: string | Array<string>) => Array.isArray(roma) ? roma.join('/') : roma
+
+// 滚动到顶部
+const handleScrollTop = () => {
+  kanaViewEl.value?.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+// 监听滚动
+const scrollHandler = () => {
+  if (kanaViewEl.value) arrowVisible.value = kanaViewEl.value.scrollTop > 0
+}
 </script>
 
 <style scoped>
