@@ -1,8 +1,8 @@
 <!--
  * @Author: luhaifeng666 youzui@hotmail.com
  * @Date: 2023-02-21 11:21:35
- * @LastEditors: haifeng.lu
- * @LastEditTime: 2023-02-27 18:02:52
+ * @LastEditors: luhaifeng666
+ * @LastEditTime: 2023-02-27 19:00:42
  * @Description: 
 -->
 <template>
@@ -31,13 +31,11 @@
         </div>
       </div>
       <template #right>
-        <div text="white sm justify" leading="relaxed">
-          <template v-if="content.subContent && content.subContent.length">
-            <p display="flex" items="start" justify="start" v-for="(sub, index) in content.subContent" :key="index">
-              <span mr="2">{{ index + 1 }}.</span>
-              <span v-html="sub"></span>
-            </p>
-          </template>
+        <div text="white sm justify" leading="relaxed" pb="8" v-if="content.subContent && content.subContent.length">
+          <p display="flex" items="start" justify="start" v-for="(sub, index) in content.subContent" :key="index">
+            <span mr="2">{{ index + 1 }}.</span>
+            <span v-html="sub"></span>
+          </p>
         </div>
       </template>
     </kana-container>
