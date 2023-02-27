@@ -2,7 +2,7 @@
  * @Author: haifeng.lu haifeng.lu@ly.com
  * @Date: 2023-02-21 16:08:49
  * @LastEditors: luhaifeng666
- * @LastEditTime: 2023-02-24 16:47:30
+ * @LastEditTime: 2023-02-27 13:51:44
  * @Description: 
  */
 
@@ -32,10 +32,10 @@ const DULL_KANA_UPPER_STR = 'ガギグゲゴザジズゼゾダヂヅデドバビ
 const AO_KANA_UPPER_STR = 'キャ,キュ,キョ,シャ,シュ,ショ,チャ,チュ,チョ,ニャ,ニュ,ニョ,ヒャ,ヒュ,ヒョ,ミャ,ミュ,ミョ,リャ,リュ,リョ'
 const AO_DULL_KANA_UPPER_STR = 'ギャ,ギュ,ギョ,ジャ,ジュ,ジョ,ヂャ,ヂュ,ヂョ,ビャ,ビュ,ビョ,ピャ,ピュ,ピョ'
 //  罗马音
-const KANA_ROMA_STR = 'a,i,u,e,o,ka,ki,ku,ke,ko,sa,si/shi,su,se,so,ta,ti,tu/tsu,te,to,na,ni,nu,ne,no,ha,hi,hu,he,ho,ma,mi,mu,me,mo,ya,&,yu,&,yo,ra,ri,ru,re,ro,wa,&,&,&,wo,nn'
-const DULL_KANA_ROMA_STR = 'ga,gi,gu,ge,go,za,zi,zu,ze,zo,da,di,du,de,do,ba,bi,bu,be,bo,pa,pi,pu,pe,po'
+const KANA_ROMA_STR = 'a,i,u,e,o,ka,ki,ku,ke,ko,sa,si/shi,su,se,so,ta,ti/chi,tu/tsu,te,to,na,ni,nu,ne,no,ha,hi,hu,he,ho,ma,mi,mu,me,mo,ya,&,yu,&,yo,ra,ri,ru,re,ro,wa,&,&,&,wo,nn'
+const DULL_KANA_ROMA_STR = 'ga,gi,gu,ge,go,za,zi,zu,ze,zo,da,di/ji,du,de,do,ba,bi,bu,be,bo,pa,pi,pu,pe,po'
 const AO_KANA_ROMA_STR = 'kya,kyu,kyo,sya,syu,syo,tya,tyu,tyo,nya,nyu,nyo,hya,hyu,hyo,mya,myu,myo,rya,ryu,ryo'
-const AO_DULL_KANA_ROMA_STR = 'gya,gyu,gyo,zya,zyu,zyo,dya,dyu,dyo,bya,byu,byo,pya,pyu,pyo'
+const AO_DULL_KANA_ROMA_STR = 'gya,gyu,gyo,zya/jia,zyu/jyu,zyo/jyo,dya,dyu,dyo,bya,byu,byo,pya,pyu,pyo'
 
 // 生成音图
 const kanaGenerator = (lower:string, upper:string, roma:string, splitor = '') => lower.split(splitor).reduce((res: Array<Kana>, item, index) => {
