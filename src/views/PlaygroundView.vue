@@ -2,7 +2,7 @@
  * @Author: luhaifeng666 youzui@hotmail.com
  * @Date: 2023-02-21 11:21:46
  * @LastEditors: luhaifeng666
- * @LastEditTime: 2023-02-23 21:13:20
+ * @LastEditTime: 2023-02-24 15:31:37
  * @Description: 
 -->
 <template>
@@ -81,6 +81,7 @@ import type { Kana } from '@/constants'
 import dayjs from 'dayjs'
 import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-vue-next'
 import { KANA, DULL, AO, AO_DULL, PATTERN } from '@/constants'
+import { isEmpty } from '@/utils'
 
 onBeforeMount(() => {
   // 初始化 currentIndex 的值
@@ -99,7 +100,7 @@ onBeforeUnmount(() => {
 // 定义抽取的个数
 const count:Ref<number> = ref(0)
 // 所有的假名
-const kanas = [...KANA, ...DULL, ...AO, ...AO_DULL]
+const kanas = [...KANA, ...DULL, ...AO, ...AO_DULL].filter(kana => !isEmpty(kana))
 // 当前是第几个
 const currentIndex: Ref<number> = ref(0)
 // 是否点击
@@ -213,7 +214,7 @@ const validation = (val: string, typeIndex = 0) => {
   const targetVal = currentKana.value[type as keyof Kana]
   if (type === 'roma') {
     _val = _val.toLowerCase()
-    return typeof(targetVal) === 'string' ? _val === targetVal : targetVal.includes(_val)
+    return typeof(targetVal) === 'string' ? _val === targetVal : (targetVal || []).includes(_val)
   }
   return targetVal === _val
 }
