@@ -1,8 +1,8 @@
 <!--
  * @Author: luhaifeng666 youzui@hotmail.com
  * @Date: 2023-02-23 15:14:12
- * @LastEditors: luhaifeng666
- * @LastEditTime: 2023-02-28 17:02:37
+ * @LastEditors: haifeng.lu
+ * @LastEditTime: 2023-02-28 23:27:41
  * @Description: 
 -->
 <template>
@@ -116,8 +116,14 @@ const renderPieChart = () => {
       series: [
         {
           type: 'pie',
-          radius: '60%',
+          radius: '55%',
           data: pieData.value,
+          top: 40,
+          label: {
+            position: 'outer',
+            alignTo: 'edge',
+            margin: 40
+          },
           emphasis: {
             itemStyle: {
               shadowBlur: 10,
