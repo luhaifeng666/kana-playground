@@ -2,9 +2,11 @@
  * @Author: haifeng.lu haifeng.lu@ly.com
  * @Date: 2023-02-21 16:08:49
  * @LastEditors: luhaifeng666
- * @LastEditTime: 2023-02-27 13:51:44
+ * @LastEditTime: 2023-02-28 16:28:29
  * @Description: 
  */
+
+import type { Kana } from '@/types'
 
 //  定义菜单项
 export const MENU_ITEMS = [
@@ -14,16 +16,9 @@ export const MENU_ITEMS = [
   { text: '', link: 'https://github.com/luhaifeng666/kana-playground', isNormal: true, name: '' }
 ]
 
-export interface Kana {
-  upperCase?: string
-  lowerCase?: string
-  roma?: Array<string> | string
-  name?: string // 用于标注是哪一行
-}
-
 //  平假名
 const KANA_LOWER_STR = 'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもや&ゆ&よらりるれろわ&&&をん'
-const DULL_KANA_LOWER_STR = 'がぎごげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽ'
+const DULL_KANA_LOWER_STR = 'がぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽ'
 const AO_KANA_LOWER_STR = 'きゃ,きゅ,きょ,しゃ,しゅ,しょ,ちゃ,ちゅ,ちょ,にゃ,にゅ,にょ,ひゃ,ひゅ,ひょ,みゃ,みゅ,みょ,りゃ,りゅ,りょ'
 const AO_DULL_KANA_LOWER_STR = 'ぎゃ,ぎゅ,ぎょ,じゃ,じゅ,じょ,ぢゃ,ぢゅ,ぢょ,びゃ,びゅ,びょ,ぴゃ,ぴゅ,ぴょ'
 //  片假名
@@ -77,4 +72,10 @@ export const PATTERN: Array<{ name: string, type: string }> = [
   { name: '平假名', type: 'lowerCase' },
   { name: '片假名', type: 'upperCase' },
   { name: '罗马音', type: 'roma' }
+]
+
+// 定义图表颜色
+export const CHAR_COLORS = [
+  '#f472b6', '#fb7185', '#f87171', '#fb923c', '#fbbf24', '#fbbf24', '#a3e635', '#34d399', '#34d399', '#2dd4bf', '#22d3ee', '#38bdf8', '#60a5fa', '#818cf8', '#a78bfa', '#a78bfa', '#e879f9',
+  '#ec4899', '#f43f5e', '#ef4444', '#f97316', '#f59e0b', '#f59e0b', '#84cc16', '#10b981', '#10b981', '#14b8a6', '#06b6d4', '#0ea5e9', '#3b82f6', '#6366f1', '#8b5cf6', '#8b5cf6', '#d946ef'
 ]

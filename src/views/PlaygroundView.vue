@@ -2,7 +2,7 @@
  * @Author: luhaifeng666 youzui@hotmail.com
  * @Date: 2023-02-21 11:21:46
  * @LastEditors: luhaifeng666
- * @LastEditTime: 2023-02-24 15:31:37
+ * @LastEditTime: 2023-02-28 14:05:54
  * @Description: 
 -->
 <template>
@@ -75,9 +75,9 @@
 </template>
 
 handleQTSwitch<script lang="ts" setup>
-import { computed, ref, onBeforeMount, onBeforeUnmount, watch } from 'vue'
+import { computed, ref, reactive, onBeforeMount, onBeforeUnmount, watch } from 'vue'
 import type { Ref } from 'vue'
-import type { Kana } from '@/constants'
+import type { Kana, RecordData } from '@/types'
 import dayjs from 'dayjs'
 import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-vue-next'
 import { KANA, DULL, AO, AO_DULL, PATTERN } from '@/constants'
@@ -90,11 +90,23 @@ onBeforeMount(() => {
   }
   // 添加键盘监听事件
   document.addEventListener('keydown', handleKeyDown)
+  // 初始化本地数据
+  const recordData = localStorage.getItem('kanaRecord')
+  if (recordData) {
+    const { time = '', data = {} } = JSON.parse(recordData)
+    // 如果本地日期是昨天，需要清空数据
+    localData.recordData = {
+      time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+      data: dayjs().isAfter(dayjs(time), 'day') ? {} : data
+    }
+  }
 })
 
 onBeforeUnmount(() => {
   // 卸载监听事件
   document.removeEventListener('keydown', handleKeyDown)
+  // 存储本地记录数据
+  localStorage.setItem('kanaRecord', JSON.stringify(localData.recordData))
 })
 
 // 定义抽取的个数
@@ -125,6 +137,12 @@ const startTime = dayjs()
  * challenge 挑战模式
  */
 const mode: Ref<string> = ref('havefun')
+// 本地存储数据
+const localData: {
+  recordData: RecordData
+} = reactive({
+  recordData: {}
+})
 
 // 随机抽取
 const randomKanas = computed(() => {
@@ -148,8 +166,10 @@ const processWidth = computed(() => ({
 }))
 // 是否显示进度条
 const processVisible = computed(() => mode.value !== 'havefun')
+// 用于渲染题目的数据
+const questionRenderData = computed(() => processVisible.value ? randomKanas.value : kanas)
 // 当前显示的假名题目
-const currentKana = computed(() => (processVisible.value ? randomKanas.value : kanas)[currentIndex.value])
+const currentKana = computed(() => questionRenderData.value[currentIndex.value])
 // 验证答案是否正确
 const isFix = computed(() => currentAType.value.type.includes('/'))
 const firstIsRight = computed(() => validation(firstAnswer.value))
@@ -164,7 +184,10 @@ const aTypes = computed(() => {
   }]
 })
 // 当前题目类型
-const currentQuestion = computed(() => currentKana.value[PATTERN[qTIndex.value].type as keyof Kana])
+const currentQuestion = computed(() => {
+  const question = currentKana.value[PATTERN[qTIndex.value].type as 'upperCase' | 'lowerCase' | 'roma'] || ''
+  return Array.isArray(question) ? question.join('/') : question
+})
 // 当前答案类型
 const currentAType = computed(() => aTypes.value[aTIndex.value])
 // 是否显示第二个输入框
@@ -180,6 +203,8 @@ watch([qTIndex, aTIndex], () => {
 
 // 下一个
 const handleNext = () => {
+  // 生成本地存储数据
+  generateLocalData()
   // 校验
   if (answerValidation.value) {
     // 清空输入框
@@ -194,6 +219,25 @@ const handleNext = () => {
       firstShake.value = secondShake.value = false
       clearTimeout(timer)
     }, 300)
+  }
+}
+const generateLocalData = () => {
+  const recordKey = currentKana.value.lowerCase || ''
+
+  if (!localData.recordData.data) localData.recordData.data = {}
+  
+  if (!Object.keys(localData.recordData.data).includes(recordKey)) {
+    localData.recordData.data[recordKey] = {
+      ...currentKana.value,
+      rightTimes: Number(answerValidation.value),
+      errorTimes: Number(!answerValidation.value)
+    }
+  } else {
+    localData.recordData.data[recordKey] = {
+      ...currentKana.value,
+      rightTimes: localData.recordData.data[recordKey].rightTimes + Number(answerValidation.value),
+      errorTimes: localData.recordData.data[recordKey].errorTimes + Number(!answerValidation.value)
+    }
   }
 }
 // 获取随机数

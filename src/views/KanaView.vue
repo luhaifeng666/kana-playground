@@ -2,7 +2,7 @@
  * @Author: luhaifeng666 youzui@hotmail.com
  * @Date: 2023-02-21 11:21:35
  * @LastEditors: luhaifeng666
- * @LastEditTime: 2023-02-27 19:00:42
+ * @LastEditTime: 2023-02-28 16:22:01
  * @Description: 
 -->
 <template>
@@ -50,7 +50,7 @@ import type { Ref } from 'vue'
 import KanaContainer from './components/KanaContainer.vue'
 import SlideTop from '@/components/SlideTop.vue'
 import { KANA_FIFTY, COLS, DULL, AO, AO_DULL } from '@/constants'
-import type { Kana } from '@/constants'
+import type { Kana } from '@/types'
 
 const kanaViewEl: Ref<HTMLElement|null> = ref(null)
 const arrowVisible: Ref<boolean> = ref(false)
