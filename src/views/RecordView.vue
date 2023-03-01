@@ -1,15 +1,23 @@
 <!--
  * @Author: luhaifeng666 youzui@hotmail.com
  * @Date: 2023-02-23 15:14:12
- * @LastEditors: haifeng.lu
- * @LastEditTime: 2023-02-28 23:46:01
+ * @LastEditors: luhaifeng666
+ * @LastEditTime: 2023-03-01 13:29:07
  * @Description: 
 -->
 <template>
   <div display="flex" text="white sm center">
     <template v-if="hasData">
-      <div ref="pie" w="lg" h="sm"></div>
-      <div ref="bar" w="lg" h="sm"></div>
+      <div>
+        <p>假名练习数量统计</p>
+        <p text="zinc-400 xs center">统计当天练习的所有假名次数</p>
+        <div ref="pie" w="lg" h="sm"></div>
+      </div>
+      <div>
+        <p>假名练习数量统计</p>
+        <p text="zinc-400 xs center">统计当天练习的所有假名次数</p>
+        <div ref="bar" w="lg" h="sm"></div>
+      </div>
     </template>
 
     <div v-else>
@@ -88,7 +96,7 @@ const pieData = computed(() => renderData.value.map((item: RecordDataItem) => ({
 })))
 // 获取错误 top 10 数据
 const topErrorData = computed(() => {
-  return renderData.value.sort((pre, aft) => aft.errorTimes - pre.errorTimes).slice(0, 10)
+  return renderData.value.filter(item => item.errorTimes > 0).sort((pre, aft) => aft.errorTimes - pre.errorTimes).slice(0, 10)
 })
 // 是否有本地数据
 const hasData = computed(() => renderData.value && !!renderData.value.length)
@@ -99,16 +107,6 @@ const renderPieChart = () => {
     const pieChart = echarts.init(pie.value)
     pieChart.setOption({
       color: CHAR_COLORS,
-      title: {
-        text: '假名练习数量统计',
-        left: 'center',
-        subtext: '统计当天练习的所有假名次数',
-        textStyle: {
-          color: '#fff',
-          fontWeight: 'normal',
-          fontSize: '14'
-        }
-      },
       tooltip: {
         trigger: 'item',
         formatter: '{b} : {c}次 (占{d}%)'
@@ -116,9 +114,8 @@ const renderPieChart = () => {
       series: [
         {
           type: 'pie',
-          radius: '55%',
+          radius: '60%',
           data: pieData.value,
-          top: '15%',
           label: {
             position: 'outer',
             alignTo: 'edge',
@@ -142,21 +139,13 @@ const renderBarChart = () => {
     const barChart = echarts.init(bar.value)
     barChart.setOption({
       color: CHAR_COLORS,
-      title: {
-        text: '错误假名',
-        left: 'center',
-        subtext: '统计当天练习错误次数最多的前10个假名',
-        textStyle: {
-          color: '#fff',
-          fontWeight: 'normal',
-          fontSize: '14'
-        }
-      },
       tooltip: {
         formatter: '{b0}:  错{c0}次'
       },
       grid: {
-        right: 0
+        right: 0,
+        top: 30,
+        bottom: 20
       },
       xAxis: {
         data: topErrorData.value.map(item => item.lowerCase)
@@ -167,7 +156,7 @@ const renderBarChart = () => {
           type: 'bar',
           data: topErrorData.value.map(item => item.errorTimes),
           itemStyle: {
-            color: (param: any) => CHAR_COLORS.slice(4, 10)[param.dataIndex]
+            color: (param: any) => CHAR_COLORS.slice(4, 14)[param.dataIndex]
           }
         }
       ]
