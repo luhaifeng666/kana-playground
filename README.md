@@ -2,7 +2,7 @@
  * @Author: luhaifeng666 youzui@hotmail.com
  * @Date: 2023-02-20 21:13:47
  * @LastEditors: luhaifeng666
- * @LastEditTime: 2023-02-24 14:20:15
+ * @LastEditTime: 2023-03-01 11:05:56
  * @Description: 
 -->
 
@@ -22,16 +22,14 @@
 
 > PS: 有使用不便，或者 Bug 啥的，欢迎提 Issue~
 
-## Todo List
+---
 
-- [ ] `基础练习功能`：
-  - [x] 随机抽取平假名，并根据平假名输入对应的片假名以及罗马音；
-  - [ ] 添加选择题模式；
-  - [ ] 添加整行输入模式；
-- [ ] `挑战赛功能`：
-  - [ ] 随机抽取指定数目的假名进行练习，并计时&打分；
-- [ ] `50音图`
+<div align="center">
+  如果您觉得这个工具对您有用，可以支持我一下~
 
-<!-- <a href="https://www.buymeacoffee.com/luhaifeng">
-  <img src="https://user-images.githubusercontent.com/9375823/221101101-69f1b3b6-91e1-4f98-8997-3c2396bf4d54.png" width="200" />
-</a> -->
+  <br />
+
+  <a href="https://www.buymeacoffee.com/luhaifeng">
+    <img src="https://user-images.githubusercontent.com/9375823/221101101-69f1b3b6-91e1-4f98-8997-3c2396bf4d54.png" width="200" />
+  </a>
+</div>

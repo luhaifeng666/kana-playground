@@ -2,7 +2,7 @@
  * @Author: luhaifeng666 youzui@hotmail.com
  * @Date: 2023-02-23 15:14:12
  * @LastEditors: haifeng.lu
- * @LastEditTime: 2023-02-28 23:27:41
+ * @LastEditTime: 2023-02-28 23:46:01
  * @Description: 
 -->
 <template>
@@ -118,7 +118,7 @@ const renderPieChart = () => {
           type: 'pie',
           radius: '55%',
           data: pieData.value,
-          top: 40,
+          top: '15%',
           label: {
             position: 'outer',
             alignTo: 'edge',
