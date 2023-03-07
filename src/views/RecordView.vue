@@ -1,8 +1,8 @@
 <!--
  * @Author: luhaifeng666 youzui@hotmail.com
  * @Date: 2023-02-23 15:14:12
- * @LastEditors: luhaifeng666
- * @LastEditTime: 2023-03-01 13:29:07
+ * @LastEditors: haifeng.lu
+ * @LastEditTime: 2023-03-07 13:24:01
  * @Description: 
 -->
 <template>
@@ -96,7 +96,7 @@ const pieData = computed(() => renderData.value.map((item: RecordDataItem) => ({
 })))
 // 获取错误 top 10 数据
 const topErrorData = computed(() => {
-  return renderData.value.filter(item => item.errorTimes > 0).sort((pre, aft) => aft.errorTimes - pre.errorTimes).slice(0, 10)
+  return renderData.value.sort((pre, aft) => aft.errorTimes - pre.errorTimes).slice(0, 10)
 })
 // 是否有本地数据
 const hasData = computed(() => renderData.value && !!renderData.value.length)
