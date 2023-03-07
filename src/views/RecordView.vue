@@ -1,8 +1,8 @@
 <!--
  * @Author: luhaifeng666 youzui@hotmail.com
  * @Date: 2023-02-23 15:14:12
- * @LastEditors: haifeng.lu
- * @LastEditTime: 2023-03-07 13:24:01
+ * @LastEditors: luhaifeng666
+ * @LastEditTime: 2023-03-08 00:33:13
  * @Description: 
 -->
 <template>
@@ -14,8 +14,8 @@
         <div ref="pie" w="lg" h="sm"></div>
       </div>
       <div>
-        <p>假名练习数量统计</p>
-        <p text="zinc-400 xs center">统计当天练习的所有假名次数</p>
+        <p>错误假名 Top 10</p>
+        <p text="zinc-400 xs center">统计当天错误次数最多的前 10 个假名</p>
         <div ref="bar" w="lg" h="sm"></div>
       </div>
     </template>
