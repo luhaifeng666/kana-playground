@@ -2,7 +2,7 @@
  * @Author: luhaifeng666 youzui@hotmail.com
  * @Date: 2023-02-20 21:13:47
  * @LastEditors: luhaifeng666
- * @LastEditTime: 2023-02-24 14:32:07
+ * @LastEditTime: 2023-03-10 22:20:13
  * @Description: 
 -->
 
@@ -38,7 +38,8 @@
 
 
 <script setup lang="ts">
-  import { computed } from "vue"
+  import { onBeforeMount } from "vue"
+  import dayjs from 'dayjs'
   import { RouterLink, RouterView, useRoute } from "vue-router"
   import { Github } from 'lucide-vue-next'
   import Footer from '@/components/Footer.vue'
@@ -49,5 +50,17 @@
   const LINK_STYLE = ['ml-4', 'hover:text-green-400']
   //  链接定义
   const links = MENU_ITEMS
+
+  onBeforeMount(() => {
+    const recordData = localStorage.getItem('kanaRecord') || '{}'
+    const { time = '' } = JSON.parse(recordData)
+    // 如果本地日期是昨天，需要清空数据
+    if (time && dayjs().isAfter(dayjs(time), 'day')) {
+        localStorage.setItem('kanaRecord', JSON.stringify({
+            time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+            data: {}
+        }))
+    }
+  })
 
 </script>
