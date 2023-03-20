@@ -31,11 +31,11 @@ jobs:
         with:
           workspaces: './src-tauri -> target'
 
-      - name: Sync node version and setup cache
-        uses: actions/setup-node@v3
-        with:
-          node-version: 'lts/*'
-          cache: 'pnpm' # Set this to npm, yarn or pnpm.
+      # - name: Sync node version and setup cache
+      #   uses: actions/setup-node@v3
+      #   with:
+      #     node-version: 'lts/*'
+      #     cache: 'pnpm' # Set this to npm, yarn or pnpm.
 
       - name: Install app dependencies and build web
         # Remove `&& yarn build` if you build your frontend in `beforeBuildCommand`
