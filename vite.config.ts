@@ -1,8 +1,8 @@
 /*
  * @Author: luhaifeng666 youzui@hotmail.com
  * @Date: 2023-02-20 21:13:47
- * @LastEditors: haifeng.lu
- * @LastEditTime: 2023-03-17 10:48:38
+ * @LastEditors: luhaifeng666
+ * @LastEditTime: 2023-03-20 10:35:44
  * @Description: 
  */
 import { fileURLToPath, URL } from 'node:url'
@@ -13,23 +13,22 @@ import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue(), WindiCSS()],
-//   base: '/kana-playground/',
-  resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+    plugins: [vue(), WindiCSS()],
+    resolve: {
+        alias: {
+            '@': fileURLToPath(new URL('./src', import.meta.url))
+        }
+    },
+    server: {
+        port: 8080
+    },
+    envPrefix: ['VITE_', 'TAURI_'],
+    build: {
+        // Tauri uses Chromium on Windows and WebKit on macOS and Linux
+        target: process.env.TAURI_PLATFORM == 'windows' ? 'chrome105' : 'safari13',
+        // don't minify for debug builds
+        minify: !process.env.TAURI_DEBUG ? 'esbuild' : false,
+        // 为调试构建生成源代码映射 (sourcemap)
+        sourcemap: !!process.env.TAURI_DEBUG
     }
-  },
-  server: {
-    port: 8080
-  },
-  envPrefix: ['VITE_', 'TAURI_'],
-  build: {
-    // Tauri uses Chromium on Windows and WebKit on macOS and Linux
-    target: process.env.TAURI_PLATFORM == 'windows' ? 'chrome105' : 'safari13',
-    // don't minify for debug builds
-    minify: !process.env.TAURI_DEBUG ? 'esbuild' : false,
-    // 为调试构建生成源代码映射 (sourcemap)
-    sourcemap: !!process.env.TAURI_DEBUG,
-  }
 })
