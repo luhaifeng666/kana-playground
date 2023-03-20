@@ -2,7 +2,7 @@
  * @Author: luhaifeng666 youzui@hotmail.com
  * @Date: 2023-02-21 11:21:46
  * @LastEditors: luhaifeng666
- * @LastEditTime: 2023-02-28 14:05:54
+ * @LastEditTime: 2023-03-20 09:58:53
  * @Description: 
 -->
 <template>
@@ -33,6 +33,7 @@
           type="text"
           autofocus
           ref="firstAnswerInput"
+          :placeholder="placeholders[0]"
           :class="['signle-inputbox', !!firstAnswer ? `text_${firstIsRight ? 'right' : 'error'}` : '', firstShake ? 'shake' : '']"
         />
         <p text="xs zinc-400 center" select="none">{{ inputLabel(0) }}</p>
@@ -44,6 +45,7 @@
           maxlength="3"
           type="text"
           ref="secondAnswerInput"
+          :placeholder="placeholders[1]"
           :class="['signle-inputbox', !!secondAnswer ? `text_${secondIsRight ? 'right' : 'error'}` : '', secondShake ? 'shake' : '']"
         />
         <p text="xs zinc-400 center" select="none">{{ inputLabel(1) }}</p>
@@ -125,6 +127,9 @@ const secondAnswerInput: Ref<HTMLInputElement | null> = ref(null)
 // shake
 const firstShake = ref(false)
 const secondShake = ref(false)
+// 错误计数
+const firstErrorTime = ref(0)
+const secondErrorTime = ref(0)
 // 题目类型索引
 const qTIndex = ref(0)
 // 答案类型索引
@@ -185,7 +190,7 @@ const aTypes = computed(() => {
 })
 // 当前题目类型
 const currentQuestion = computed(() => {
-  const question = currentKana.value[PATTERN[qTIndex.value].type as 'upperCase' | 'lowerCase' | 'roma'] || ''
+  const question = currentKana.value[PATTERN[qTIndex.value].type as keyof Kana] || ''
   return Array.isArray(question) ? question.join('/') : question
 })
 // 当前答案类型
@@ -194,6 +199,16 @@ const currentAType = computed(() => aTypes.value[aTIndex.value])
 const secondInputVisible = computed(() => isFix.value)
 // 输入框label
 const inputLabel = computed(() => (index: number) => currentAType.value.name.split('/')[index])
+// 生成输入框 placeholder
+const placeholders = computed(() => {
+    return currentAType.value.type.split('/').map((type, index) => {
+        const answer = currentKana.value[type as keyof Kana]
+        if ((!index && firstErrorTime.value >= 3) || (index && secondErrorTime.value >= 3)) {
+            return Array.isArray(answer) ? answer[0] : answer
+        }
+        return ''
+    })
+})
 
 // 监听类型变化
 watch([qTIndex, aTIndex], () => {
@@ -209,12 +224,17 @@ const handleNext = () => {
   if (answerValidation.value) {
     // 清空输入框
     firstAnswer.value = secondAnswer.value = ''
+    // 清空错误计数
+    firstErrorTime.value = secondErrorTime.value = 0
     // 第一个输入框focus
     firstAnswerInput.value && firstAnswerInput.value.focus()
     currentIndex.value = processVisible.value ? currentIndex.value + 1 : getRandomNum(kanas.length)
   } else {
     firstShake.value = !firstIsRight.value
     secondShake.value = !secondIsRight.value
+    // 错误计数
+    firstErrorTime.value += 1
+    if (secondInputVisible) secondErrorTime.value += 1
     const timer = setTimeout(() => {
       firstShake.value = secondShake.value = false
       clearTimeout(timer)
@@ -250,6 +270,7 @@ const handleKeyDown = (e: KeyboardEvent) => {
 const handleTypeSwitch = (type: 'question' | 'answer') => {
   const indexRef = type === 'question' ? qTIndex : aTIndex
   indexRef.value = indexRef.value > 1 ? 0 : indexRef.value + 1
+  firstErrorTime.value = secondErrorTime.value = 0
 }
 // 答案校验
 const validation = (val: string, typeIndex = 0) => {
@@ -264,7 +285,6 @@ const validation = (val: string, typeIndex = 0) => {
 }
 </script>
 
-<!-- TODO 样式合并 -->
 <style scoped>
 .p_progress::before {
   content: '';
