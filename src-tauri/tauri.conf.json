@@ -8,8 +8,8 @@
     "withGlobalTauri": false
   },
   "package": {
-    "productName": "kana-playground",
-    "version": "0.1.0"
+    "productName": "kana_playground",
+    "version": "1.0.5"
   },
   "tauri": {
     "allowlist": {
