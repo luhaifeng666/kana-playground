@@ -2,7 +2,7 @@
  * @Author: luhaifeng666 youzui@hotmail.com
  * @Date: 2023-04-04 14:04:55
  * @LastEditors: haifeng.lu
- * @LastEditTime: 2023-05-17 00:31:08
+ * @LastEditTime: 2023-05-17 07:07:23
  * @Description: 
 -->
 <template>
@@ -116,7 +116,7 @@
   const currentIndex: Ref<number> = ref(0)
   const shake: Ref<boolean> = ref(false)
   const errorTimes: Ref<number> = ref(0) // 错误三次给提示
-  const answersDegree = ref(new Map()) // 错误答案收集
+  const answersDegree = ref(new Map()) // 答案收集
   const time: Ref<number> = ref(new Date().getTime())
   const degreeData: Ref<{ [key: string]: number }> = ref({})
 
