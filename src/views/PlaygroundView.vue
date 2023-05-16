@@ -2,7 +2,7 @@
  * @Author: luhaifeng666 youzui@hotmail.com
  * @Date: 2023-02-21 11:21:46
  * @LastEditors: luhaifeng666
- * @LastEditTime: 2023-03-20 09:58:53
+ * @LastEditTime: 2023-05-12 17:06:24
  * @Description: 
 -->
 <template>
@@ -284,14 +284,3 @@ const validation = (val: string, typeIndex = 0) => {
   return targetVal === _val
 }
 </script>
-
-<style scoped>
-.p_progress::before {
-  content: '';
-  display: block;
-  width: 100%;
-  height: 4px;
-  background: #3F3F46;
-  border-radius: 2px;
-}
-</style>

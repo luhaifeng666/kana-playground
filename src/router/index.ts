@@ -2,7 +2,7 @@
  * @Author: luhaifeng666 youzui@hotmail.com
  * @Date: 2023-02-20 21:13:47
  * @LastEditors: luhaifeng666
- * @LastEditTime: 2023-02-23 15:14:57
+ * @LastEditTime: 2023-04-04 14:05:58
  * @Description: 
  */
 import { createRouter, createWebHistory } from 'vue-router'
@@ -28,6 +28,11 @@ const router = createRouter({
       path: '/playground',
       name: 'playground',
       component: () => import('../views/PlaygroundView.vue')
+    },
+    {
+      path: '/tango',
+      name: 'tango',
+      component: () => import('../views/Tango.vue')
     },
     {
       path: '/record',

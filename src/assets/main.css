@@ -6,6 +6,34 @@
   animation: shake .3s ease forwards;
 }
 
+.p_progress::before {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 4px;
+  background: #3F3F46;
+  border-radius: 2px;
+}
+
+.selector-options::before {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 0;
+  height: 0;
+  border: 4px solid;
+  border-color: transparent transparent #18181B transparent;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.selector-options li:not(:last-of-type) {
+  border-bottom: 1px solid;
+  box-sizing: border-box;
+  @apply border-zinc-700;
+}
+
 @keyframes shake {
   0% { transform: translateX(0); }
   20% { transform: translateX(-3px); }

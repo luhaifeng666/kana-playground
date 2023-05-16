@@ -2,15 +2,17 @@
  * @Author: haifeng.lu haifeng.lu@ly.com
  * @Date: 2023-02-21 16:08:49
  * @LastEditors: luhaifeng666
- * @LastEditTime: 2023-02-28 16:28:29
+ * @LastEditTime: 2023-05-16 11:20:04
  * @Description: 
  */
 
 import type { Kana } from '@/types'
+import { ZR_FIRST_BOOK_WORDS } from './words'
 
 //  定义菜单项
 export const MENU_ITEMS = [
-  { text: '练习', link: '/playground', isNormal: false, name: 'playground' },
+  { text: '卷假名', link: '/playground', isNormal: false, name: 'playground' },
+  { text: '卷单词', link: '/tango', isNormal: false, name: 'tango' },
   { text: '音图', link: '/kana', isNormal: false, name: 'kana' },
   { text: '记录', link: '/record', isNormal: false, name: 'record' },
   { text: '', link: 'https://github.com/luhaifeng666/kana-playground', isNormal: true, name: '' }
@@ -79,3 +81,11 @@ export const CHAR_COLORS = [
   '#f472b6', '#fb7185', '#f87171', '#fb923c', '#fbbf24', '#fbbf24', '#a3e635', '#34d399', '#34d399', '#2dd4bf', '#22d3ee', '#38bdf8', '#60a5fa', '#818cf8', '#a78bfa', '#a78bfa', '#e879f9',
   '#ec4899', '#f43f5e', '#ef4444', '#f97316', '#f59e0b', '#f59e0b', '#84cc16', '#10b981', '#10b981', '#14b8a6', '#06b6d4', '#0ea5e9', '#3b82f6', '#6366f1', '#8b5cf6', '#8b5cf6', '#d946ef'
 ]
+
+// 定义单词
+export const WORDS = {
+    zrFirst: { name: '综合日本语第一册', words: ZR_FIRST_BOOK_WORDS }
+}
+
+// 定义练习的个数
+export const EXERCISE_SIZE = [20, 50, 100, '∞']
