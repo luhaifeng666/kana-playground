@@ -1,5 +1,10 @@
 {
   "files": [],
+  "paths":{
+    "@": ["src"],
+    "@/*": ["src/*"],
+  },
+  "include": ["src/**/*.vue"],
   "references": [
     {
       "path": "./tsconfig.config.json"

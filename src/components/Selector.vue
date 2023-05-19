@@ -17,7 +17,16 @@
     @click="toggleOptionsVisible"
   >
     {{ props.selectedOption }}
-    <ul border="rounded" top="12" left="-4" w="24" text="white" bg="zinc-900" class="absolute selector-options" v-show="optionsVisible">
+    <ul
+      border="rounded"
+      top="12"
+      left="-4"
+      w="24"
+      text="white"
+      bg="zinc-900"
+      class="absolute selector-options"
+      v-show="optionsVisible"
+    >
       <li
         py="2"
         mx="2"
@@ -26,44 +35,57 @@
         :class="option === props.selectedOption ? 'text-green-400' : ''"
         :key="option"
         @click="handleSelect(option)"
-      >{{ option }}</li>
+      >
+        {{ option }}
+      </li>
     </ul>
   </div>
 </template>
 
 <script setup lang="ts">
-import { withDefaults, defineEmits, defineProps, ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import type { Ref } from 'vue'
+import {
+  withDefaults,
+  defineProps,
+  ref,
+  onMounted,
+  onBeforeUnmount,
+} from "vue";
+import type { Ref } from "vue";
 
-type OptionItem = string | number
+type OptionItem = string | number;
 
 onMounted(() => {
-  document.addEventListener('click', handleEvent, true)
-})
+  document.addEventListener("click", handleEvent, true);
+});
 
-onBeforeUnmount(() => document.removeEventListener('click', handleEvent))
+onBeforeUnmount(() => document.removeEventListener("click", handleEvent));
 
-const props = withDefaults(defineProps<{ // generic
-  isMultiple?: boolean
-  data: OptionItem[]
-  selectedOption: OptionItem
-}>(), {
-  isMultiple: false,
-  data: () => []
-})
+const props = withDefaults(
+  defineProps<{
+    // generic
+    isMultiple?: boolean;
+    data: OptionItem[];
+    selectedOption: OptionItem;
+  }>(),
+  {
+    isMultiple: false,
+    data: () => [],
+  }
+);
 
-const emits = defineEmits(['select'])
+const emits = defineEmits(["select"]);
 
-const optionsVisible: Ref<boolean> = ref(false)
+const optionsVisible: Ref<boolean> = ref(false);
 
 const handleSelect = (option: OptionItem) => {
-  toggleOptionsVisible()
-  emits('select', option)
-}
+  toggleOptionsVisible();
+  emits("select", option);
+};
 
-const toggleOptionsVisible = () => optionsVisible.value = !optionsVisible.value
+const toggleOptionsVisible = () =>
+  (optionsVisible.value = !optionsVisible.value);
 
 const handleEvent = (e: Event) => {
-  if (optionsVisible.value) optionsVisible.value = false
-}
+  if (optionsVisible.value) optionsVisible.value = false;
+};
 </script>

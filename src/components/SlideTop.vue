@@ -23,14 +23,16 @@
     hover:bg="green-400"
     select="none"
     @click="handleScrollTop"
-  ><ChevronUp :size="15" />TOP</div>
+  >
+    <ChevronUp :size="15" />TOP
+  </div>
 </template>
 
 <script lang="ts" setup>
-import { ChevronUp } from 'lucide-vue-next'
-const emits = defineEmits(['scroll'])
+import { ChevronUp } from "lucide-vue-next";
+const emits = defineEmits(["scroll"]);
 
 const handleScrollTop = () => {
-  emits('scroll')
-}
+  emits("scroll");
+};
 </script>
