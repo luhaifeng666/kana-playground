@@ -2,12 +2,12 @@
  * @Author: haifeng.lu haifeng.lu@ly.com
  * @Date: 2023-05-16 22:21:56
  * @LastEditors: haifeng.lu
- * @LastEditTime: 2023-05-16 22:22:18
+ * @LastEditTime: 2023-05-23 00:22:57
  * @Description: 结果弹窗
 -->
 <template>
   <Transition>
-    <div class="fixed" w="full" h="full" bg="gray-900/80">
+    <div class="fixed" w="full" h="full" bg="gray-900/80" v-if="visible">
       <div
         border="rounded-lg"
         bg="zinc-800"
@@ -27,21 +27,22 @@
           <x-circle cursor="pointer" @click="handleClose"></x-circle>
         </div>
 
-        <p text="green-400 center" mt="4">
+        <div text="green-400 center" mt="4">
           <file-edit :size="45" />
-        </p>
+          <p text="sm gray-500" mt="1">你做的很棒！ 再接再励哟~</p>
+        </div>
 
         <div bg="zinc-900" border="rounded" mt="8" mb="2" text="white middle">
           <p class="flex" justify="start" items="center" p="4">
             <check-circle :size="18" mr="2" /> 完成单词数
             <span text="green-400 right" flex="grow shrink basis-full">{{
-              props.count
+              count
             }}</span>
           </p>
           <p class="flex" justify="start" items="center" p="4">
             <pie-chart :size="18" mr="2" /> 正确率
             <span text="green-400 right" flex="grow shrink basis-full"
-              >{{ props.rightRate }}%</span
+              >{{ rightRate }}%</span
             >
           </p>
         </div>
@@ -50,7 +51,7 @@
           <p class="flex" justify="start" items="center" p="4">
             <alarm-clock :size="18" mr="2" /> 总耗时
             <span text="green-400 right" flex="grow shrink basis-full">{{
-              props.time
+              time
             }}</span>
           </p>
         </div>
@@ -63,7 +64,7 @@
           p="2"
           cursor="pointer"
           hover="bg-green-400 text-white"
-          @click="handleContinue"
+          @click="handleClose"
         >
           继续卷
         </p>
@@ -73,7 +74,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, computed } from "vue";
+import { computed } from "vue";
 import type { ComputedRef } from "vue";
 import dayjs from "dayjs";
 import {
@@ -88,11 +89,12 @@ import type { Week } from "@/types";
 
 const props = defineProps({
   count: Number,
-  rightRate: Number,
+  rightRate: String,
   time: String,
+  visible: Boolean
 });
 
-const emits = defineEmits(["close", "continue"]);
+const emits = defineEmits(["update:visible"]);
 
 const date: ComputedRef<string> = computed(() => dayjs().format("MM/DD"));
 const title: ComputedRef<Week> = computed(
@@ -100,18 +102,14 @@ const title: ComputedRef<Week> = computed(
 );
 
 const handleClose = () => {
-  emits("close");
-};
-
-const handleContinue = () => {
-  emits("continue");
+  emits("update:visible");
 };
 </script>
 
 <style scoped>
 .v-enter-active,
 .v-leave-active {
-  transition: opacity 0.5s ease;
+  transition: all 0.5s ease;
 }
 
 .v-enter-from,

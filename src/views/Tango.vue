@@ -3,7 +3,7 @@
  * @Author: luhaifeng666 youzui@hotmail.com
  * @Date: 2023-04-04 14:04:55
  * @LastEditors: haifeng.lu
- * @LastEditTime: 2023-05-17 07:07:23
+ * @LastEditTime: 2023-05-23 00:47:16
  * @Description: 
 -->
 <template>
@@ -138,7 +138,7 @@
   </template>
 
   <!-- 结果弹窗 -->
-  <Modal :count="questionCount"></Modal>
+  <Modal v-if="visible" :count="questionCount" :right-rate="rightRate" :time="time" v-model:visible="visible"></Modal>
 </template>
 
 <script lang="ts" setup>
@@ -152,16 +152,13 @@ import Modal from "../components/Modal.vue";
 
 onMounted(() => {
   document.addEventListener("keydown", handleKeyDown);
-
-  setTimeout(() => {
-    console.log(dayjs(new Date().getTime() - time.value).format("mm:ss"));
-  }, 1000);
 });
 
 onBeforeUnmount(() => {
   document.removeEventListener("keydown", handleKeyDown);
 });
 
+const beginTime: Ref<number> = ref(dayjs());
 const showPlayground: Ref<boolean> = ref(false); // 是否显示练习界面
 const account: Ref<string | number> = ref(20); // 练习的单词数
 const processCurrent: Ref<number> = ref(1); // 当前进度条显示的已练习的单词个数
@@ -172,8 +169,8 @@ const currentIndex: Ref<number> = ref(0);
 const shake: Ref<boolean> = ref(false);
 const errorTimes: Ref<number> = ref(0); // 错误三次给提示
 const answersDegree = ref(new Map()); // 答案收集
-const time: Ref<number> = ref(new Date().getTime());
 const degreeData: Ref<{ [key: string]: number }> = ref({});
+const visible: Ref<boolean> = ref(false)
 
 watch(showPlayground, (val) => {
   if (val) {
@@ -197,10 +194,14 @@ watch(showPlayground, (val) => {
       currentIndex.value = getRandomNum();
     }
   } else {
-    isInfinite.value && setDegree(); // 无限模式下，返回选择界面需要保存熟练度
-    handleRest();
+    if (isInfinite.value) { // 无限模式下，返回选择界面需要保存熟练度
+      setDegree();
+      visible.value = !!questionCount.value; // 如果一题都没练，就别显示了，夺丢人呐
+    }
   }
 });
+
+watch(visible, val => { !val && handleRest() })
 
 const exerciseSize = computed(() => EXERCISE_SIZE);
 const processStyle = computed(() =>
@@ -215,6 +216,7 @@ const processStyle = computed(() =>
         ).toFixed(2)}%`,
       }
 );
+// 题海
 const allWords: ComputedRef<Word[]> = computed(() =>
   Object.entries(WORDS).reduce(
     (arr: Word[], [, word]: [string, { name: string; words: Word[] }]) => [
@@ -224,11 +226,13 @@ const allWords: ComputedRef<Word[]> = computed(() =>
     []
   )
 );
+// 当前问题的索引值
 const currentQuestionIndex: ComputedRef<number> = computed(() =>
   isInfinite.value
     ? currentIndex.value
     : questions.value[processCurrent.value - 1]
 );
+// 当前显示的题目信息
 const currentQuestion: ComputedRef<Word & WordExtra> = computed(() => {
   const word = allWords.value[currentQuestionIndex.value];
   return { ...word, degree: degreeData.value[word.kana] || 0 };
@@ -236,20 +240,35 @@ const currentQuestion: ComputedRef<Word & WordExtra> = computed(() => {
 const inputStyle: ComputedRef<StyleValue> = computed(() => ({
   width: `${currentQuestion.value.kana.length * 1.25 + 2}rem`,
 }));
+// 是否是无限模式
 const isInfinite: ComputedRef<boolean> = computed(
   () => typeof account.value === "string"
 );
+// 是否显示下一个按钮
 const nextVisible: ComputedRef<boolean> = computed(
   () => isInfinite.value || processCurrent.value < questions.value.length
 );
+// 正确校验
 const isRight: ComputedRef<boolean> = computed(() => {
   const { kana, text } = currentQuestion.value;
   const res = [kana, text];
-  return res.includes(answers.value[processCurrent.value - 1]);
+  const answer = answers.value[processCurrent.value - 1]
+  return !!answer && res.includes(answer);
 });
+// 完成所有题数计算
 const questionCount: ComputedRef<number> = computed(
   () => Array.from(answersDegree.value.values()).length
 );
+// 正确率计算
+const rightRate: ComputedRef<string> = computed(() => {
+  const answers = Array.from(answersDegree.value.values())
+  return questionCount.value ? (answers.filter(answer => answer > 0).length / questionCount.value * 100).toFixed(2) : '0.00'
+})
+// 计算用时
+const time: ComputedRef<string> = computed(() => {
+  const diffTime = ['hour', 'minute', 'second'].map(key => dayjs().diff(beginTime.value, key)).join(':')
+  return dayjs(`${dayjs().format('YYYY-MM-DD')} ${diffTime}`).format('HH小时mm分ss秒')
+})
 
 // 监听 enter 按键事件
 const initDegreeData = () => {
@@ -261,7 +280,9 @@ const handleKeyDown = (e: KeyboardEvent) => {
 const handleSelect = (option: string | number) => {
   account.value = option;
 };
-const toggleStart = () => (showPlayground.value = !showPlayground.value);
+const toggleStart = () => {
+  showPlayground.value = !showPlayground.value
+};
 const getRandomNum = () =>
   Math.ceil(Math.random() * (allWords.value.length - 1));
 const handleNext = () => {
@@ -288,6 +309,8 @@ const handleNext = () => {
       } else {
         // 写入熟练度
         setDegree();
+        // 弹出结果弹窗
+        visible.value = true
       }
     } else {
       processCurrent.value += 1;
@@ -315,5 +338,6 @@ const handleRest = () => {
   answers.value = [];
   errorTimes.value = 0;
   answersDegree.value.clear();
+  beginTime.value = dayjs()
 };
 </script>
