@@ -1,5 +1,10 @@
 {
   "files": [],
+  "paths":{
+    "@": ["src"],
+    "@/*": ["src/*"],
+  },
+  "include": ["src/**/*.vue"],
   "references": [
     {
       "path": "./tsconfig.config.json"
@@ -10,5 +15,8 @@
     {
       "path": "./tsconfig.vitest.json"
     }
-  ]
+  ],
+  "compilerOptions": {
+    "lib": ["ES2017", "DOM"]
+  }
 }
