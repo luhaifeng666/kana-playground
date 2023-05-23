@@ -138,12 +138,19 @@
   </template>
 
   <!-- 结果弹窗 -->
-  <Modal v-if="visible" :count="questionCount" :right-rate="rightRate" :time="time" v-model:visible="visible"></Modal>
+  <Modal
+    v-if="visible"
+    :count="questionCount"
+    :right-rate="rightRate"
+    :time="time"
+    v-model:visible="visible"
+  ></Modal>
 </template>
 
 <script lang="ts" setup>
 import { ref, computed, watch, onMounted, onBeforeUnmount } from "vue";
-import dayjs from "dayjs";
+import dayjs from "dayjs/esm";
+import type { Dayjs, UnitType } from "dayjs";
 import type { Ref, ComputedRef, StyleValue } from "vue";
 import { EXERCISE_SIZE, WORDS } from "@/constants";
 import type { Word, WordExtra } from "@/types";
@@ -158,7 +165,7 @@ onBeforeUnmount(() => {
   document.removeEventListener("keydown", handleKeyDown);
 });
 
-const beginTime: Ref<number> = ref(dayjs());
+const beginTime: Ref<Dayjs> = ref(dayjs());
 const showPlayground: Ref<boolean> = ref(false); // 是否显示练习界面
 const account: Ref<string | number> = ref(20); // 练习的单词数
 const processCurrent: Ref<number> = ref(1); // 当前进度条显示的已练习的单词个数
@@ -170,7 +177,7 @@ const shake: Ref<boolean> = ref(false);
 const errorTimes: Ref<number> = ref(0); // 错误三次给提示
 const answersDegree = ref(new Map()); // 答案收集
 const degreeData: Ref<{ [key: string]: number }> = ref({});
-const visible: Ref<boolean> = ref(false)
+const visible: Ref<boolean> = ref(false);
 
 watch(showPlayground, (val) => {
   if (val) {
@@ -194,14 +201,17 @@ watch(showPlayground, (val) => {
       currentIndex.value = getRandomNum();
     }
   } else {
-    if (isInfinite.value) { // 无限模式下，返回选择界面需要保存熟练度
+    if (isInfinite.value) {
+      // 无限模式下，返回选择界面需要保存熟练度
       setDegree();
       visible.value = !!questionCount.value; // 如果一题都没练，就别显示了，夺丢人呐
     }
   }
 });
 
-watch(visible, val => { !val && handleRest() })
+watch(visible, (val) => {
+  !val && handleRest();
+});
 
 const exerciseSize = computed(() => EXERCISE_SIZE);
 const processStyle = computed(() =>
@@ -252,7 +262,7 @@ const nextVisible: ComputedRef<boolean> = computed(
 const isRight: ComputedRef<boolean> = computed(() => {
   const { kana, text } = currentQuestion.value;
   const res = [kana, text];
-  const answer = answers.value[processCurrent.value - 1]
+  const answer = answers.value[processCurrent.value - 1];
   return !!answer && res.includes(answer);
 });
 // 完成所有题数计算
@@ -261,14 +271,24 @@ const questionCount: ComputedRef<number> = computed(
 );
 // 正确率计算
 const rightRate: ComputedRef<string> = computed(() => {
-  const answers = Array.from(answersDegree.value.values())
-  return questionCount.value ? (answers.filter(answer => answer > 0).length / questionCount.value * 100).toFixed(2) : '0.00'
-})
+  const answers = Array.from(answersDegree.value.values());
+  return questionCount.value
+    ? (
+        (answers.filter((answer) => answer > 0).length / questionCount.value) *
+        100
+      ).toFixed(2)
+    : "0.00";
+});
 // 计算用时
 const time: ComputedRef<string> = computed(() => {
-  const diffTime = ['hour', 'minute', 'second'].map(key => dayjs().diff(beginTime.value, key)).join(':')
-  return dayjs(`${dayjs().format('YYYY-MM-DD')} ${diffTime}`).format('HH小时mm分ss秒')
-})
+  const keys: Array<UnitType> = ["hour", "minute", "second"];
+  const diffTime = keys
+    .map((key: UnitType) => dayjs().diff(beginTime.value, key))
+    .join(":");
+  return dayjs(`${dayjs().format("YYYY-MM-DD")} ${diffTime}`).format(
+    "HH小时mm分ss秒"
+  );
+});
 
 // 监听 enter 按键事件
 const initDegreeData = () => {
@@ -281,7 +301,7 @@ const handleSelect = (option: string | number) => {
   account.value = option;
 };
 const toggleStart = () => {
-  showPlayground.value = !showPlayground.value
+  showPlayground.value = !showPlayground.value;
 };
 const getRandomNum = () =>
   Math.ceil(Math.random() * (allWords.value.length - 1));
@@ -310,7 +330,7 @@ const handleNext = () => {
         // 写入熟练度
         setDegree();
         // 弹出结果弹窗
-        visible.value = true
+        visible.value = true;
       }
     } else {
       processCurrent.value += 1;
@@ -338,6 +358,6 @@ const handleRest = () => {
   answers.value = [];
   errorTimes.value = 0;
   answersDegree.value.clear();
-  beginTime.value = dayjs()
+  beginTime.value = dayjs();
 };
 </script>

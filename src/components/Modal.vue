@@ -2,7 +2,7 @@
  * @Author: haifeng.lu haifeng.lu@ly.com
  * @Date: 2023-05-16 22:21:56
  * @LastEditors: haifeng.lu
- * @LastEditTime: 2023-05-23 00:22:57
+ * @LastEditTime: 2023-05-23 00:57:52
  * @Description: 结果弹窗
 -->
 <template>
@@ -34,14 +34,14 @@
 
         <div bg="zinc-900" border="rounded" mt="8" mb="2" text="white middle">
           <p class="flex" justify="start" items="center" p="4">
-            <check-circle :size="18" mr="2" /> 完成单词数
-            <span text="green-400 right" flex="grow shrink basis-full">{{
+            <check-circle :size="18" /> 完成单词数
+            <span ml="2" text="green-400 right" flex="grow shrink basis-full">{{
               count
             }}</span>
           </p>
           <p class="flex" justify="start" items="center" p="4">
-            <pie-chart :size="18" mr="2" /> 正确率
-            <span text="green-400 right" flex="grow shrink basis-full"
+            <pie-chart :size="18" /> 正确率
+            <span ml="2" text="green-400 right" flex="grow shrink basis-full"
               >{{ rightRate }}%</span
             >
           </p>
@@ -49,8 +49,8 @@
 
         <div bg="zinc-900" border="rounded" mb="8" text="white middle">
           <p class="flex" justify="start" items="center" p="4">
-            <alarm-clock :size="18" mr="2" /> 总耗时
-            <span text="green-400 right" flex="grow shrink basis-full">{{
+            <alarm-clock :size="18" /> 总耗时
+            <span ml="2" text="green-400 right" flex="grow shrink basis-full">{{
               time
             }}</span>
           </p>
@@ -91,7 +91,7 @@ const props = defineProps({
   count: Number,
   rightRate: String,
   time: String,
-  visible: Boolean
+  visible: Boolean,
 });
 
 const emits = defineEmits(["update:visible"]);
