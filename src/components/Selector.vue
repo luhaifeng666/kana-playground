@@ -43,13 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  withDefaults,
-  defineProps,
-  ref,
-  onMounted,
-  onBeforeUnmount,
-} from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 import type { Ref } from "vue";
 
 type OptionItem = string | number;
@@ -85,7 +79,7 @@ const handleSelect = (option: OptionItem) => {
 const toggleOptionsVisible = () =>
   (optionsVisible.value = !optionsVisible.value);
 
-const handleEvent = (e: Event) => {
+const handleEvent = () => {
   if (optionsVisible.value) optionsVisible.value = false;
 };
 </script>

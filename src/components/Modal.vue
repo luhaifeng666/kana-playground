@@ -91,7 +91,7 @@ const props = defineProps({
   count: Number,
   rightRate: String,
   time: String,
-  visible: Boolean
+  visible: Boolean,
 });
 
 const emits = defineEmits(["update:visible"]);
