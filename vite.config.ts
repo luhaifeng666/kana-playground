@@ -31,4 +31,5 @@ export default defineConfig({
     // 为调试构建生成源代码映射 (sourcemap)
     sourcemap: !!process.env.TAURI_DEBUG,
   },
+  envDir: './build'
 });

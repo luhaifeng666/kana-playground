@@ -75,7 +75,7 @@
         ]"
       />
 
-      <p flex="center" text="sm zinc-400 center" select="none">
+      <p flex="center" text="md zinc-400 center" select="none">
         音型: {{ currentQuestion.tone }} | 词性: {{ currentQuestion.kind }} |
         熟练度:
         <span
@@ -94,14 +94,28 @@
         ></span>
       </p>
       <!-- TODO 添加例句，试试 chatGpt ？ -->
-      <p
+      <div
+        v-if="!exampleIsNotEmpty"
         flex="center"
-        text="sm zinc-400 center"
+        text="md green-400 center bold"
         select="none"
-        v-if="currentQuestion.sentence"
+        mt="2"
+        cursor="pointer"
+        @click="getSentence"
       >
-        例句: {{ currentQuestion.sentence }}
-      </p>
+        点我看个栗子 <Loader v-if="loading" :size="18" animate="spin" ml="1" />
+      </div>
+
+      <div text="md zinc-400 center" mt="2">
+        <p>
+          <ruby v-for="(item, index) in example.format" :key="index">
+            {{ item.text || item.kana }}
+            <rt v-if="item.text" text="green-400">{{ item.kana }}</rt>
+          </ruby>
+          <!-- {{ example.sentence }} -->
+          {{ example.translation }}
+        </p>
+      </div>
 
       <div
         mt="4"
@@ -152,10 +166,12 @@ import { ref, computed, watch, onMounted, onBeforeUnmount } from "vue";
 import dayjs from "dayjs/esm";
 import type { Dayjs, UnitType } from "dayjs";
 import type { Ref, ComputedRef, StyleValue } from "vue";
+import { Loader } from "lucide-vue-next";
 import { EXERCISE_SIZE, WORDS } from "@/constants";
-import type { Word, WordExtra } from "@/types";
+import type { Word, WordExtra, Example } from "@/types";
 import Selector from "@/components/Selector.vue";
 import Modal from "../components/Modal.vue";
+import { getExampleSentence } from "@/service/open";
 
 onMounted(() => {
   document.addEventListener("keydown", handleKeyDown);
@@ -178,6 +194,8 @@ const errorTimes: Ref<number> = ref(0); // 错误三次给提示
 const answersDegree = ref(new Map()); // 答案收集
 const degreeData: Ref<{ [key: string]: number }> = ref({});
 const visible: Ref<boolean> = ref(false);
+const example: Ref<Example> = ref({});
+const loading: Ref<boolean> = ref(false);
 
 watch(showPlayground, (val) => {
   if (val) {
@@ -290,7 +308,59 @@ const time: ComputedRef<string> = computed(() => {
     "HH小时mm分ss秒"
   );
 });
+const exampleIsNotEmpty: ComputedRef<boolean> = computed(
+  () => Object.keys(example.value).length > 0
+);
 
+// 获取例句
+const getSentence = async () => {
+  loading.value = true;
+  const res = await getExampleSentence(currentQuestion.value);
+  loading.value = false;
+  const { status, data } = res;
+  if (status === 200) {
+    const { choices = [] } = data || {};
+    if (choices && choices.length) {
+      const sentenceObj = JSON.parse(
+        choices[0].text.replace(/\n/g, "") || "{}"
+      );
+      const { sentence, kana } = sentenceObj;
+      const nonKanaRegex = /[^\u3040-\u309F\u30A0-\u30FFー]/g;
+      const kanas = sentence.split(nonKanaRegex);
+      const kanaRegex = new RegExp(
+        `${kanas.filter((kana) => !!kana).join("|")}`,
+        "g"
+      );
+      const kanjiWords = sentence.split(kanaRegex).filter((text) => !!text);
+      const kanaWords = kana.split(kanaRegex).filter((text) => !!text);
+      const otherKanaWords = sentence.match(kanaRegex);
+
+      example.value = {
+        ...sentenceObj,
+        format: kanjiWords.reduce(
+          (arr, kanji, index) => [
+            ...arr,
+            {
+              kana: kanaWords[index],
+              text: kanji,
+            },
+            {
+              kana: otherKanaWords[index],
+            },
+          ],
+          []
+        ),
+      };
+
+      console.table({
+        kanjiWords,
+        kanaWords,
+        otherKanaWords,
+        res: example.value,
+      });
+    }
+  }
+};
 // 监听 enter 按键事件
 const initDegreeData = () => {
   degreeData.value = JSON.parse(localStorage.getItem("degree_records") || "{}");
@@ -317,6 +387,8 @@ const handleNext = () => {
       errorTimes.value += 1;
       return;
     }
+
+    example.value = {};
 
     answersDegree.value.set(
       currentQuestion.value.kana,

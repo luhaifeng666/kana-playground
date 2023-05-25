@@ -35,7 +35,16 @@ export type WordExtra = {
   sentence?: string;
 };
 
-export type Week = {
-  text: string;
+export type ExampleSentence = {
+  text?: string;
   kana: string;
 };
+
+export type Example = {
+  sentence: string;
+  kana: string;
+  translation: string;
+  format: ExampleSentence[];
+};
+
+export type Week = Required<ExampleSentence>;
