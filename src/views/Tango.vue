@@ -169,7 +169,7 @@ const beginTime: Ref<Dayjs> = ref(dayjs());
 const showPlayground: Ref<boolean> = ref(false); // 是否显示练习界面
 const account: Ref<string | number> = ref(20); // 练习的单词数
 const processCurrent: Ref<number> = ref(1); // 当前进度条显示的已练习的单词个数
-const questions: Ref<number[]> = ref([]); // 所有随机筛出来的题目
+const questions: Ref<number[]> = ref([]); // 所有随机筛出来的题目索引
 const answers: Ref<string[]> = ref([]);
 const input: Ref<HTMLInputElement | null> = ref(null);
 const currentIndex: Ref<number> = ref(0);
@@ -210,7 +210,10 @@ watch(showPlayground, (val) => {
 });
 
 watch(visible, (val) => {
-  !val && handleRest();
+  if (!val) {
+    toggleStart();
+    handleRest();
+  }
 });
 
 const exerciseSize = computed(() => EXERCISE_SIZE);
@@ -266,9 +269,7 @@ const isRight: ComputedRef<boolean> = computed(() => {
   return !!answer && res.includes(answer);
 });
 // 完成所有题数计算
-const questionCount: ComputedRef<number> = computed(
-  () => Array.from(answersDegree.value.values()).length
-);
+const questionCount: ComputedRef<number> = computed(() => answers.value.length);
 // 正确率计算
 const rightRate: ComputedRef<string> = computed(() => {
   const answers = Array.from(answersDegree.value.values());

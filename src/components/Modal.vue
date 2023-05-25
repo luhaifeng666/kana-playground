@@ -87,7 +87,7 @@ import {
 import { WEEK_NAMES } from "@/constants";
 import type { Week } from "@/types";
 
-const props = defineProps({
+defineProps({
   count: Number,
   rightRate: String,
   time: String,
