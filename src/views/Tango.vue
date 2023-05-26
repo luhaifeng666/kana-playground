@@ -11,12 +11,25 @@
   <template v-if="!showPlayground">
     <div text="center white">
       <div class="flex-center">
-        背他个<Selector
+        请选择练习范围：
+        <Selector
           @select="handleSelect"
-          :data="exerciseSize"
+          :options="booksOption"
+          :selected-option="currentBook"
+        ></Selector>
+        <Selector
+          v-if="currentBook.key !== 'all'"
+          @select="handleClassAndUnitSelect"
+          :options="classesAndUnits"
+          :selected-option="currentClassAndUnit"
+          tree
+        ></Selector>
+        的
+        <Selector
+          @select="handleAccountSelect"
+          :options="exerciseSize"
           :selected-option="account"
-        ></Selector
-        >个单词卷死他们！🤪
+        ></Selector>
       </div>
       <p
         w="26"
@@ -94,7 +107,7 @@
         ></span>
       </p>
       <!-- TODO 添加例句，试试 chatGpt ？ -->
-      <div
+      <!-- <div
         v-if="!exampleIsNotEmpty"
         flex="center"
         text="md green-400 center bold"
@@ -104,16 +117,16 @@
         @click="getSentence"
       >
         点我看个栗子 <Loader v-if="loading" :size="18" animate="spin" ml="1" />
-      </div>
+      </div> -->
 
-      <div text="md zinc-400 center" mt="2">
+      <div text="md zinc-400 center" mt="2" v-if="currentQuestion.format">
         <p>
-          <ruby v-for="(item, index) in example.format" :key="index">
+          <ruby v-for="(item, index) in currentQuestion.format" :key="index">
             {{ item.text || item.kana }}
             <rt v-if="item.text" text="green-400">{{ item.kana }}</rt>
           </ruby>
           <!-- {{ example.sentence }} -->
-          {{ example.translation }}
+          {{ currentQuestion.translation }}
         </p>
       </div>
 
@@ -166,12 +179,13 @@ import { ref, computed, watch, onMounted, onBeforeUnmount } from "vue";
 import dayjs from "dayjs/esm";
 import type { Dayjs, UnitType } from "dayjs";
 import type { Ref, ComputedRef, StyleValue } from "vue";
-import { Loader } from "lucide-vue-next";
-import { EXERCISE_SIZE, WORDS } from "@/constants";
-import type { Word, WordExtra, Example } from "@/types";
+import { WORDS, EXERCISE_SIZE } from "@/constants";
+import type { Word, WordExtra, Option } from "@/types";
+import { getClassesAndUnits, getBooks } from "@/utils";
 import Selector from "@/components/Selector.vue";
 import Modal from "../components/Modal.vue";
-import { getExampleSentence } from "@/service/open";
+
+const booksOption: Option[] = getBooks();
 
 onMounted(() => {
   document.addEventListener("keydown", handleKeyDown);
@@ -183,7 +197,9 @@ onBeforeUnmount(() => {
 
 const beginTime: Ref<Dayjs> = ref(dayjs());
 const showPlayground: Ref<boolean> = ref(false); // 是否显示练习界面
-const account: Ref<string | number> = ref(20); // 练习的单词数
+const account: Ref<Option> = ref({ key: 20, value: "20个" });
+const currentBook: Ref<Option> = ref(booksOption[0]); // 练习的课本
+const currentClassAndUnit: Ref<Option> = ref({});
 const processCurrent: Ref<number> = ref(1); // 当前进度条显示的已练习的单词个数
 const questions: Ref<number[]> = ref([]); // 所有随机筛出来的题目索引
 const answers: Ref<string[]> = ref([]);
@@ -194,8 +210,6 @@ const errorTimes: Ref<number> = ref(0); // 错误三次给提示
 const answersDegree = ref(new Map()); // 答案收集
 const degreeData: Ref<{ [key: string]: number }> = ref({});
 const visible: Ref<boolean> = ref(false);
-const example: Ref<Example> = ref({});
-const loading: Ref<boolean> = ref(false);
 
 watch(showPlayground, (val) => {
   if (val) {
@@ -234,7 +248,15 @@ watch(visible, (val) => {
   }
 });
 
-const exerciseSize = computed(() => EXERCISE_SIZE);
+watch(
+  () => currentBook.value.key,
+  (val) => {
+    if (val !== "all") {
+      currentClassAndUnit.value = classesAndUnits.value[0];
+    }
+  }
+);
+
 const processStyle = computed(() =>
   isInfinite.value
     ? {
@@ -257,6 +279,11 @@ const allWords: ComputedRef<Word[]> = computed(() =>
     []
   )
 );
+const exerciseSize = computed(() =>
+  EXERCISE_SIZE.map((number) => ({ key: number, value: `${number}个` }))
+);
+// 课程列表
+const classesAndUnits = computed(() => getClassesAndUnits(currentBook.value));
 // 当前问题的索引值
 const currentQuestionIndex: ComputedRef<number> = computed(() =>
   isInfinite.value
@@ -265,6 +292,7 @@ const currentQuestionIndex: ComputedRef<number> = computed(() =>
 );
 // 当前显示的题目信息
 const currentQuestion: ComputedRef<Word & WordExtra> = computed(() => {
+  console.log(allWords.value.slice(0, 100));
   const word = allWords.value[currentQuestionIndex.value];
   return { ...word, degree: degreeData.value[word.kana] || 0 };
 });
@@ -273,7 +301,7 @@ const inputStyle: ComputedRef<StyleValue> = computed(() => ({
 }));
 // 是否是无限模式
 const isInfinite: ComputedRef<boolean> = computed(
-  () => typeof account.value === "string"
+  () => currentBook.value.key === "all"
 );
 // 是否显示下一个按钮
 const nextVisible: ComputedRef<boolean> = computed(
@@ -308,59 +336,6 @@ const time: ComputedRef<string> = computed(() => {
     "HH小时mm分ss秒"
   );
 });
-const exampleIsNotEmpty: ComputedRef<boolean> = computed(
-  () => Object.keys(example.value).length > 0
-);
-
-// 获取例句
-const getSentence = async () => {
-  loading.value = true;
-  const res = await getExampleSentence(currentQuestion.value);
-  loading.value = false;
-  const { status, data } = res;
-  if (status === 200) {
-    const { choices = [] } = data || {};
-    if (choices && choices.length) {
-      const sentenceObj = JSON.parse(
-        choices[0].text.replace(/\n/g, "") || "{}"
-      );
-      const { sentence, kana } = sentenceObj;
-      const nonKanaRegex = /[^\u3040-\u309F\u30A0-\u30FFー]/g;
-      const kanas = sentence.split(nonKanaRegex);
-      const kanaRegex = new RegExp(
-        `${kanas.filter((kana) => !!kana).join("|")}`,
-        "g"
-      );
-      const kanjiWords = sentence.split(kanaRegex).filter((text) => !!text);
-      const kanaWords = kana.split(kanaRegex).filter((text) => !!text);
-      const otherKanaWords = sentence.match(kanaRegex);
-
-      example.value = {
-        ...sentenceObj,
-        format: kanjiWords.reduce(
-          (arr, kanji, index) => [
-            ...arr,
-            {
-              kana: kanaWords[index],
-              text: kanji,
-            },
-            {
-              kana: otherKanaWords[index],
-            },
-          ],
-          []
-        ),
-      };
-
-      console.table({
-        kanjiWords,
-        kanaWords,
-        otherKanaWords,
-        res: example.value,
-      });
-    }
-  }
-};
 // 监听 enter 按键事件
 const initDegreeData = () => {
   degreeData.value = JSON.parse(localStorage.getItem("degree_records") || "{}");
@@ -368,7 +343,13 @@ const initDegreeData = () => {
 const handleKeyDown = (e: KeyboardEvent) => {
   if (e && e.keyCode === 13) handleNext();
 };
-const handleSelect = (option: string | number) => {
+const handleSelect = (option: Option) => {
+  currentBook.value = option;
+};
+const handleClassAndUnitSelect = (option: Option) => {
+  currentClassAndUnit.value = option;
+};
+const handleAccountSelect = (option: Option) => {
   account.value = option;
 };
 const toggleStart = () => {
@@ -387,9 +368,6 @@ const handleNext = () => {
       errorTimes.value += 1;
       return;
     }
-
-    example.value = {};
-
     answersDegree.value.set(
       currentQuestion.value.kana,
       (answersDegree.value.get(currentQuestion.value.kana) || 0) +
