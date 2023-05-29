@@ -17,6 +17,11 @@
     }
   ],
   "compilerOptions": {
-    "lib": ["ES2017", "DOM"]
+    "lib": ["ES2017", "DOM"],
+    "noUnusedLocals": false,
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   }
 }

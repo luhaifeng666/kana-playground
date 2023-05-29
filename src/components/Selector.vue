@@ -71,7 +71,7 @@
 import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 import { ChevronRight } from "lucide-vue-next";
 import type { Ref } from "vue";
-import { Option, OptionExtra } from "@/types";
+import type { Option, OptionExtra } from "@/types";
 import { isEmpty } from "@/utils";
 
 onMounted(() => {
@@ -85,7 +85,7 @@ const props = withDefaults(
     // generic
     isMultiple?: boolean;
     options: Option[];
-    selectedOption: Option & OptionExtra;
+    selectedOption: Partial<Option & OptionExtra>;
     tree?: boolean;
   }>(),
   {
@@ -98,7 +98,7 @@ const props = withDefaults(
 const emits = defineEmits(["select"]);
 
 const optionsVisible: Ref<boolean> = ref(false);
-const currentChildren: Ref<Option> = ref({});
+const currentChildren: Ref<Partial<Option>> = ref({});
 
 const displayContent = computed(() => {
   const { selectedOption } = props;
@@ -112,7 +112,7 @@ const displayContent = computed(() => {
 });
 
 const handleSelect = (option: Option) => {
-  if (props.tree && option.children.length) {
+  if (props.tree && option.children?.length) {
     currentChildren.value = isEmpty(currentChildren.value) ? option : {};
   } else {
     toggleOptionsVisible();

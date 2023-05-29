@@ -33,7 +33,7 @@ export type Word = {
 export type WordExtra = {
   degree?: number;
   sentence?: string;
-  example?: Example;
+  // example?: Example;
 };
 
 export type ExampleSentence = {
@@ -51,7 +51,7 @@ export type Example = {
 export type Week = Required<ExampleSentence>;
 
 export type Option = {
-  key: string;
+  key: string | number;
   value: string;
   words?: Array<Word & WordExtra>;
   children?: Option[];

@@ -8,7 +8,13 @@
 <template>
   <div display="flex" w="full" flex="shrink-0" divide="x zinc-400 dashed">
     <div basis="1/2" pr="4">
-      <p text="white right" mb="4" position="relative" v-html="leftTitle" class="container_title"></p>
+      <p
+        text="white right"
+        mb="4"
+        position="relative"
+        v-html="leftTitle"
+        class="container_title"
+      ></p>
       <slot></slot>
     </div>
     <div basis="1/2" pl="4">
@@ -20,14 +26,14 @@
 
 <script lang="ts" setup>
 defineProps({
-  leftTitle: { type: String, default: '' },
-  rightTitle: { type: String, default: '' }
-})
+  leftTitle: { type: String, default: "" },
+  rightTitle: { type: String, default: "" },
+});
 </script>
 
 <style scoped>
 .container_title::after {
-  content: '';
+  content: "";
   display: block;
   width: 0.5rem;
   height: 0.5rem;
