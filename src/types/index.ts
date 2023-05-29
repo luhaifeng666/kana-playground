@@ -33,9 +33,30 @@ export type Word = {
 export type WordExtra = {
   degree?: number;
   sentence?: string;
+  example?: Example;
 };
 
-export type Week = {
-  text: string;
+export type ExampleSentence = {
+  text?: string;
   kana: string;
+};
+
+export type Example = {
+  sentence: string;
+  kana: string;
+  translation: string;
+  format?: ExampleSentence[];
+};
+
+export type Week = Required<ExampleSentence>;
+
+export type Option = {
+  key: string;
+  value: string;
+  words?: Array<Word & WordExtra>;
+  children?: Option[];
+};
+
+export type OptionExtra = {
+  selectedChildIndex?: number;
 };

@@ -11,12 +11,24 @@
   <template v-if="!showPlayground">
     <div text="center white">
       <div class="flex-center">
-        背他个<Selector
+        请选择练习范围：
+        <Selector
           @select="handleSelect"
-          :data="exerciseSize"
+          :options="booksOption"
+          :selected-option="currentBook"
+        ></Selector>
+        <Selector
+          v-if="currentBook.key !== 'all'"
+          @select="handleClassAndUnitSelect"
+          :options="classesAndUnits"
+          :selected-option="currentClassAndUnit"
+          tree
+        ></Selector>
+        <Selector
+          @select="handleAccountSelect"
+          :options="exerciseSize"
           :selected-option="account"
-        ></Selector
-        >个单词卷死他们！🤪
+        ></Selector>
       </div>
       <p
         w="26"
@@ -51,7 +63,7 @@
       </div>
       <p text="center">
         <span text="green-400">{{ processCurrent }}</span
-        ><span mx="1">/</span><span>{{ account }}</span>
+        ><span mx="1">/</span><span>{{ account.key }}</span>
       </p>
     </div>
 
@@ -75,7 +87,7 @@
         ]"
       />
 
-      <p flex="center" text="sm zinc-400 center" select="none">
+      <p flex="center" text="md zinc-400 center" select="none">
         音型: {{ currentQuestion.tone }} | 词性: {{ currentQuestion.kind }} |
         熟练度:
         <span
@@ -94,14 +106,28 @@
         ></span>
       </p>
       <!-- TODO 添加例句，试试 chatGpt ？ -->
-      <p
+      <!-- <div
+        v-if="!exampleIsNotEmpty"
         flex="center"
-        text="sm zinc-400 center"
+        text="md green-400 center bold"
         select="none"
-        v-if="currentQuestion.sentence"
+        mt="2"
+        cursor="pointer"
+        @click="getSentence"
       >
-        例句: {{ currentQuestion.sentence }}
-      </p>
+        点我看个栗子 <Loader v-if="loading" :size="18" animate="spin" ml="1" />
+      </div> -->
+
+      <div text="md zinc-400 center" mt="2" v-if="currentQuestion.format">
+        <p>
+          <ruby v-for="(item, index) in currentQuestion.format" :key="index">
+            {{ item.text || item.kana }}
+            <rt v-if="item.text" text="green-400">{{ item.kana }}</rt>
+          </ruby>
+          <!-- {{ example.sentence }} -->
+          {{ currentQuestion.translation }}
+        </p>
+      </div>
 
       <div
         mt="4"
@@ -152,10 +178,13 @@ import { ref, computed, watch, onMounted, onBeforeUnmount } from "vue";
 import dayjs from "dayjs/esm";
 import type { Dayjs, UnitType } from "dayjs";
 import type { Ref, ComputedRef, StyleValue } from "vue";
-import { EXERCISE_SIZE, WORDS } from "@/constants";
-import type { Word, WordExtra } from "@/types";
+import { WORDS, EXERCISE_SIZE } from "@/constants";
+import type { Word, WordExtra, Option, OptionExtra } from "@/types";
+import { getClassesAndUnits, getBooks } from "@/utils";
 import Selector from "@/components/Selector.vue";
 import Modal from "../components/Modal.vue";
+
+const booksOption: Option[] = getBooks();
 
 onMounted(() => {
   document.addEventListener("keydown", handleKeyDown);
@@ -165,77 +194,39 @@ onBeforeUnmount(() => {
   document.removeEventListener("keydown", handleKeyDown);
 });
 
-const beginTime: Ref<Dayjs> = ref(dayjs());
-const showPlayground: Ref<boolean> = ref(false); // 是否显示练习界面
-const account: Ref<string | number> = ref(20); // 练习的单词数
-const processCurrent: Ref<number> = ref(1); // 当前进度条显示的已练习的单词个数
-const questions: Ref<number[]> = ref([]); // 所有随机筛出来的题目
-const answers: Ref<string[]> = ref([]);
-const input: Ref<HTMLInputElement | null> = ref(null);
-const currentIndex: Ref<number> = ref(0);
-const shake: Ref<boolean> = ref(false);
-const errorTimes: Ref<number> = ref(0); // 错误三次给提示
-const answersDegree = ref(new Map()); // 答案收集
-const degreeData: Ref<{ [key: string]: number }> = ref({});
-const visible: Ref<boolean> = ref(false);
-
-watch(showPlayground, (val) => {
-  if (val) {
-    // 初始化熟练度
-    initDegreeData();
-
-    if (!isInfinite.value) {
-      let count = account.value as number;
-      const map = new Map();
-      while (count > 0) {
-        const number = getRandomNum();
-        if (!map.has(number)) {
-          map.set(number, number);
-          count--;
-        }
-      }
-
-      questions.value = Array.from(map.values());
-    } else {
-      questions.value = [];
-      currentIndex.value = getRandomNum();
-    }
-  } else {
-    if (isInfinite.value) {
-      // 无限模式下，返回选择界面需要保存熟练度
-      setDegree();
-      visible.value = !!questionCount.value; // 如果一题都没练，就别显示了，夺丢人呐
-    }
-  }
-});
-
-watch(visible, (val) => {
-  !val && handleRest();
-});
-
-const exerciseSize = computed(() => EXERCISE_SIZE);
 const processStyle = computed(() =>
   isInfinite.value
     ? {
         width: "100%",
       }
     : {
-        width: `${(
-          (processCurrent.value / (account.value as number)) *
-          100
-        ).toFixed(2)}%`,
+        width: `${((processCurrent.value / account.value.key) * 100).toFixed(
+          2
+        )}%`,
       }
 );
 // 题海
 const allWords: ComputedRef<Word[]> = computed(() =>
-  Object.entries(WORDS).reduce(
-    (arr: Word[], [, word]: [string, { name: string; words: Word[] }]) => [
-      ...arr,
-      ...word.words,
-    ],
-    []
-  )
+  currentBook.value.key === "all"
+    ? Object.entries(WORDS).reduce(
+        (arr: Word[], [, word]: [string, { name: string; words: Word[] }]) => [
+          ...arr,
+          ...word.words,
+        ],
+        []
+      )
+    : currentClassAndUnit.value.children[
+        currentClassAndUnit.value.selectedChildIndex
+      ].words
 );
+const exerciseSize = computed(() =>
+  EXERCISE_SIZE.map((number) => ({
+    key: number,
+    value: `随机的${number}个单词`,
+  }))
+);
+// 课程列表
+const classesAndUnits = computed(() => getClassesAndUnits(currentBook.value));
 // 当前问题的索引值
 const currentQuestionIndex: ComputedRef<number> = computed(() =>
   isInfinite.value
@@ -252,7 +243,7 @@ const inputStyle: ComputedRef<StyleValue> = computed(() => ({
 }));
 // 是否是无限模式
 const isInfinite: ComputedRef<boolean> = computed(
-  () => typeof account.value === "string"
+  () => account.value.key === "∞"
 );
 // 是否显示下一个按钮
 const nextVisible: ComputedRef<boolean> = computed(
@@ -266,9 +257,7 @@ const isRight: ComputedRef<boolean> = computed(() => {
   return !!answer && res.includes(answer);
 });
 // 完成所有题数计算
-const questionCount: ComputedRef<number> = computed(
-  () => Array.from(answersDegree.value.values()).length
-);
+const questionCount: ComputedRef<number> = computed(() => answers.value.length);
 // 正确率计算
 const rightRate: ComputedRef<string> = computed(() => {
   const answers = Array.from(answersDegree.value.values());
@@ -290,6 +279,82 @@ const time: ComputedRef<string> = computed(() => {
   );
 });
 
+const beginTime: Ref<Dayjs> = ref(dayjs());
+const showPlayground: Ref<boolean> = ref(false); // 是否显示练习界面
+const account: Ref<Option> = ref(exerciseSize.value[0]);
+const currentBook: Ref<Option> = ref(booksOption[0]); // 练习的课本
+const currentClassAndUnit: Ref<Option> = ref({});
+const processCurrent: Ref<number> = ref(1); // 当前进度条显示的已练习的单词个数
+const questions: Ref<number[]> = ref([]); // 所有随机筛出来的题目索引
+const answers: Ref<string[]> = ref([]);
+const input: Ref<HTMLInputElement | null> = ref(null);
+const currentIndex: Ref<number> = ref(0);
+const shake: Ref<boolean> = ref(false);
+const errorTimes: Ref<number> = ref(0); // 错误三次给提示
+const answersDegree = ref(new Map()); // 答案收集
+const degreeData: Ref<{ [key: string]: number }> = ref({});
+const visible: Ref<boolean> = ref(false);
+
+watch(showPlayground, (val) => {
+  if (val) {
+    // 初始化熟练度
+    initDegreeData();
+
+    if (!isInfinite.value) {
+      let count = account.value.key;
+      const map = [];
+      while (count > 0) {
+        const number = getRandomNum();
+        if (
+          account.value.key > allWords.value.length ||
+          !map.includes(number)
+        ) {
+          map.push(number);
+          count--;
+        }
+      }
+
+      questions.value = map;
+    } else {
+      questions.value = [];
+      currentIndex.value = getRandomNum();
+    }
+  } else {
+    if (isInfinite.value) {
+      // 无限模式下，返回选择界面需要保存熟练度
+      setDegree();
+      visible.value = !!questionCount.value; // 如果一题都没练，就别显示了，夺丢人呐
+    }
+  }
+});
+
+watch(visible, (val) => {
+  if (!val) {
+    toggleStart();
+    handleRest();
+  }
+});
+
+watch(
+  () => currentBook.value.key,
+  (val) => {
+    if (val !== "all") {
+      currentClassAndUnit.value = {
+        ...classesAndUnits.value[0],
+        selectedChildIndex: 0,
+      };
+    }
+    account.value = exerciseSize.value[0];
+  }
+);
+
+watch(
+  [currentClassAndUnit.value.key, currentClassAndUnit.value.selectedChildIndex],
+  () => {
+    account.value = exerciseSize.value[0];
+  }
+);
+
 // 监听 enter 按键事件
 const initDegreeData = () => {
   degreeData.value = JSON.parse(localStorage.getItem("degree_records") || "{}");
@@ -297,7 +362,13 @@ const initDegreeData = () => {
 const handleKeyDown = (e: KeyboardEvent) => {
   if (e && e.keyCode === 13) handleNext();
 };
-const handleSelect = (option: string | number) => {
+const handleSelect = (option: Option) => {
+  currentBook.value = option;
+};
+const handleClassAndUnitSelect = (option: Option & OptionExtra) => {
+  currentClassAndUnit.value = option;
+};
+const handleAccountSelect = (option: Option) => {
   account.value = option;
 };
 const toggleStart = () => {
@@ -316,7 +387,6 @@ const handleNext = () => {
       errorTimes.value += 1;
       return;
     }
-
     answersDegree.value.set(
       currentQuestion.value.kana,
       (answersDegree.value.get(currentQuestion.value.kana) || 0) +
@@ -324,7 +394,7 @@ const handleNext = () => {
     );
 
     if (!isInfinite.value) {
-      if (processCurrent.value < (account.value as number)) {
+      if (processCurrent.value < account.value.key) {
         processCurrent.value += 1;
       } else {
         // 写入熟练度
@@ -359,5 +429,6 @@ const handleRest = () => {
   errorTimes.value = 0;
   answersDegree.value.clear();
   beginTime.value = dayjs();
+  account.value = exerciseSize.value[0];
 };
 </script>
