@@ -16,12 +16,14 @@
     class="cursor-pointer relative"
     @click="toggleOptionsVisible"
   >
-    {{ selectedOption.value }}
+    {{ displayContent }}
     <ul
       border="rounded"
       top="12"
       left="-5"
       w="50"
+      max-h="55"
+      overflow="y-scroll"
       text="white"
       bg="zinc-900"
       class="absolute selector-options"
@@ -50,12 +52,12 @@
         </p>
         <template v-if="tree && currentChildren.key === option.key">
           <p
-            v-for="child in currentChildren.children"
+            v-for="(child, index) in currentChildren.children || []"
             :key="child.key"
             pt="2"
             text="sm white left"
             hover:text="green-400"
-            @click="handleChildSelect(option)"
+            @click="handleChildSelect(option, index)"
           >
             {{ child.value }}
           </p>
@@ -66,10 +68,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 import { ChevronRight } from "lucide-vue-next";
 import type { Ref } from "vue";
-import { Option } from "@/type";
+import { Option, OptionExtra } from "@/type";
 import { isEmpty } from "@/utils";
 
 onMounted(() => {
@@ -83,7 +85,7 @@ const props = withDefaults(
     // generic
     isMultiple?: boolean;
     options: Option[];
-    selectedOption: Option;
+    selectedOption: Option & OptionExtra;
     tree?: boolean;
   }>(),
   {
@@ -98,6 +100,17 @@ const emits = defineEmits(["select"]);
 const optionsVisible: Ref<boolean> = ref(false);
 const currentChildren: Ref<Option> = ref({});
 
+const displayContent = computed(() => {
+  const { selectedOption } = props;
+  const text = selectedOption.value;
+  if (selectedOption.children?.length) {
+    return `${text} ${
+      selectedOption.children[selectedOption.selectedChildIndex || 0].value
+    }`;
+  }
+  return text;
+});
+
 const handleSelect = (option: Option) => {
   if (props.tree && option.children.length) {
     currentChildren.value = isEmpty(currentChildren.value) ? option : {};
@@ -107,9 +120,9 @@ const handleSelect = (option: Option) => {
   }
 };
 
-const handleChildSelect = (option: Option) => {
+const handleChildSelect = (option: Option, index: number) => {
   toggleOptionsVisible();
-  emits("select", option);
+  emits("select", { ...option, selectedChildIndex: index });
 };
 
 const toggleOptionsVisible = () => {

@@ -56,3 +56,7 @@ export type Option = {
   words?: Array<Word & WordExtra>;
   children?: Option[];
 };
+
+export type OptionExtra = {
+  selectedChildIndex?: number;
+};

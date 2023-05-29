@@ -24,7 +24,6 @@
           :selected-option="currentClassAndUnit"
           tree
         ></Selector>
-        的
         <Selector
           @select="handleAccountSelect"
           :options="exerciseSize"
@@ -64,7 +63,7 @@
       </div>
       <p text="center">
         <span text="green-400">{{ processCurrent }}</span
-        ><span mx="1">/</span><span>{{ account }}</span>
+        ><span mx="1">/</span><span>{{ account.key }}</span>
       </p>
     </div>
 
@@ -180,7 +179,7 @@ import dayjs from "dayjs/esm";
 import type { Dayjs, UnitType } from "dayjs";
 import type { Ref, ComputedRef, StyleValue } from "vue";
 import { WORDS, EXERCISE_SIZE } from "@/constants";
-import type { Word, WordExtra, Option } from "@/types";
+import type { Word, WordExtra, Option, OptionExtra } from "@/types";
 import { getClassesAndUnits, getBooks } from "@/utils";
 import Selector from "@/components/Selector.vue";
 import Modal from "../components/Modal.vue";
@@ -195,92 +194,36 @@ onBeforeUnmount(() => {
   document.removeEventListener("keydown", handleKeyDown);
 });
 
-const beginTime: Ref<Dayjs> = ref(dayjs());
-const showPlayground: Ref<boolean> = ref(false); // 是否显示练习界面
-const account: Ref<Option> = ref({ key: 20, value: "20个" });
-const currentBook: Ref<Option> = ref(booksOption[0]); // 练习的课本
-const currentClassAndUnit: Ref<Option> = ref({});
-const processCurrent: Ref<number> = ref(1); // 当前进度条显示的已练习的单词个数
-const questions: Ref<number[]> = ref([]); // 所有随机筛出来的题目索引
-const answers: Ref<string[]> = ref([]);
-const input: Ref<HTMLInputElement | null> = ref(null);
-const currentIndex: Ref<number> = ref(0);
-const shake: Ref<boolean> = ref(false);
-const errorTimes: Ref<number> = ref(0); // 错误三次给提示
-const answersDegree = ref(new Map()); // 答案收集
-const degreeData: Ref<{ [key: string]: number }> = ref({});
-const visible: Ref<boolean> = ref(false);
-
-watch(showPlayground, (val) => {
-  if (val) {
-    // 初始化熟练度
-    initDegreeData();
-
-    if (!isInfinite.value) {
-      let count = account.value as number;
-      const map = new Map();
-      while (count > 0) {
-        const number = getRandomNum();
-        if (!map.has(number)) {
-          map.set(number, number);
-          count--;
-        }
-      }
-
-      questions.value = Array.from(map.values());
-    } else {
-      questions.value = [];
-      currentIndex.value = getRandomNum();
-    }
-  } else {
-    if (isInfinite.value) {
-      // 无限模式下，返回选择界面需要保存熟练度
-      setDegree();
-      visible.value = !!questionCount.value; // 如果一题都没练，就别显示了，夺丢人呐
-    }
-  }
-});
-
-watch(visible, (val) => {
-  if (!val) {
-    toggleStart();
-    handleRest();
-  }
-});
-
-watch(
-  () => currentBook.value.key,
-  (val) => {
-    if (val !== "all") {
-      currentClassAndUnit.value = classesAndUnits.value[0];
-    }
-  }
-);
-
 const processStyle = computed(() =>
   isInfinite.value
     ? {
         width: "100%",
       }
     : {
-        width: `${(
-          (processCurrent.value / (account.value as number)) *
-          100
-        ).toFixed(2)}%`,
+        width: `${((processCurrent.value / account.value.key) * 100).toFixed(
+          2
+        )}%`,
       }
 );
 // 题海
 const allWords: ComputedRef<Word[]> = computed(() =>
-  Object.entries(WORDS).reduce(
-    (arr: Word[], [, word]: [string, { name: string; words: Word[] }]) => [
-      ...arr,
-      ...word.words,
-    ],
-    []
-  )
+  currentBook.value.key === "all"
+    ? Object.entries(WORDS).reduce(
+        (arr: Word[], [, word]: [string, { name: string; words: Word[] }]) => [
+          ...arr,
+          ...word.words,
+        ],
+        []
+      )
+    : currentClassAndUnit.value.children[
+        currentClassAndUnit.value.selectedChildIndex
+      ].words
 );
 const exerciseSize = computed(() =>
-  EXERCISE_SIZE.map((number) => ({ key: number, value: `${number}个` }))
+  EXERCISE_SIZE.map((number) => ({
+    key: number,
+    value: `随机的${number}个单词`,
+  }))
 );
 // 课程列表
 const classesAndUnits = computed(() => getClassesAndUnits(currentBook.value));
@@ -292,7 +235,6 @@ const currentQuestionIndex: ComputedRef<number> = computed(() =>
 );
 // 当前显示的题目信息
 const currentQuestion: ComputedRef<Word & WordExtra> = computed(() => {
-  console.log(allWords.value.slice(0, 100));
   const word = allWords.value[currentQuestionIndex.value];
   return { ...word, degree: degreeData.value[word.kana] || 0 };
 });
@@ -301,7 +243,7 @@ const inputStyle: ComputedRef<StyleValue> = computed(() => ({
 }));
 // 是否是无限模式
 const isInfinite: ComputedRef<boolean> = computed(
-  () => currentBook.value.key === "all"
+  () => account.value.key === "∞"
 );
 // 是否显示下一个按钮
 const nextVisible: ComputedRef<boolean> = computed(
@@ -336,6 +278,83 @@ const time: ComputedRef<string> = computed(() => {
     "HH小时mm分ss秒"
   );
 });
+
+const beginTime: Ref<Dayjs> = ref(dayjs());
+const showPlayground: Ref<boolean> = ref(false); // 是否显示练习界面
+const account: Ref<Option> = ref(exerciseSize.value[0]);
+const currentBook: Ref<Option> = ref(booksOption[0]); // 练习的课本
+const currentClassAndUnit: Ref<Option> = ref({});
+const processCurrent: Ref<number> = ref(1); // 当前进度条显示的已练习的单词个数
+const questions: Ref<number[]> = ref([]); // 所有随机筛出来的题目索引
+const answers: Ref<string[]> = ref([]);
+const input: Ref<HTMLInputElement | null> = ref(null);
+const currentIndex: Ref<number> = ref(0);
+const shake: Ref<boolean> = ref(false);
+const errorTimes: Ref<number> = ref(0); // 错误三次给提示
+const answersDegree = ref(new Map()); // 答案收集
+const degreeData: Ref<{ [key: string]: number }> = ref({});
+const visible: Ref<boolean> = ref(false);
+
+watch(showPlayground, (val) => {
+  if (val) {
+    // 初始化熟练度
+    initDegreeData();
+
+    if (!isInfinite.value) {
+      let count = account.value.key;
+      const map = [];
+      while (count > 0) {
+        const number = getRandomNum();
+        if (
+          account.value.key > allWords.value.length ||
+          !map.includes(number)
+        ) {
+          map.push(number);
+          count--;
+        }
+      }
+
+      questions.value = map;
+    } else {
+      questions.value = [];
+      currentIndex.value = getRandomNum();
+    }
+  } else {
+    if (isInfinite.value) {
+      // 无限模式下，返回选择界面需要保存熟练度
+      setDegree();
+      visible.value = !!questionCount.value; // 如果一题都没练，就别显示了，夺丢人呐
+    }
+  }
+});
+
+watch(visible, (val) => {
+  if (!val) {
+    toggleStart();
+    handleRest();
+  }
+});
+
+watch(
+  () => currentBook.value.key,
+  (val) => {
+    if (val !== "all") {
+      currentClassAndUnit.value = {
+        ...classesAndUnits.value[0],
+        selectedChildIndex: 0,
+      };
+    }
+    account.value = exerciseSize.value[0];
+  }
+);
+
+watch(
+  [currentClassAndUnit.value.key, currentClassAndUnit.value.selectedChildIndex],
+  () => {
+    account.value = exerciseSize.value[0];
+  }
+);
+
 // 监听 enter 按键事件
 const initDegreeData = () => {
   degreeData.value = JSON.parse(localStorage.getItem("degree_records") || "{}");
@@ -346,7 +365,7 @@ const handleKeyDown = (e: KeyboardEvent) => {
 const handleSelect = (option: Option) => {
   currentBook.value = option;
 };
-const handleClassAndUnitSelect = (option: Option) => {
+const handleClassAndUnitSelect = (option: Option & OptionExtra) => {
   currentClassAndUnit.value = option;
 };
 const handleAccountSelect = (option: Option) => {
@@ -375,7 +394,7 @@ const handleNext = () => {
     );
 
     if (!isInfinite.value) {
-      if (processCurrent.value < (account.value as number)) {
+      if (processCurrent.value < account.value.key) {
         processCurrent.value += 1;
       } else {
         // 写入熟练度
@@ -410,5 +429,6 @@ const handleRest = () => {
   errorTimes.value = 0;
   answersDegree.value.clear();
   beginTime.value = dayjs();
+  account.value = exerciseSize.value[0];
 };
 </script>
