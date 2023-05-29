@@ -118,16 +118,16 @@
         点我看个栗子 <Loader v-if="loading" :size="18" animate="spin" ml="1" />
       </div> -->
 
-      <div text="md zinc-400 center" mt="2" v-if="currentQuestion.format">
-        <p>
-          <ruby v-for="(item, index) in currentQuestion.format" :key="index">
+      <!-- <div text="md zinc-400 center" mt="2" v-if="currentQuestion.format">
+        <p> -->
+      <!-- <ruby v-for="(item, index) in currentQuestion.format" :key="index">
             {{ item.text || item.kana }}
             <rt v-if="item.text" text="green-400">{{ item.kana }}</rt>
-          </ruby>
-          <!-- {{ example.sentence }} -->
-          {{ currentQuestion.translation }}
-        </p>
-      </div>
+          </ruby> -->
+      <!-- {{ example.sentence }} -->
+      <!-- {{ currentQuestion.translation }} -->
+      <!-- </p>
+      </div> -->
 
       <div
         mt="4"
@@ -176,7 +176,7 @@
 <script lang="ts" setup>
 import { ref, computed, watch, onMounted, onBeforeUnmount } from "vue";
 import dayjs from "dayjs/esm";
-import type { Dayjs, UnitType } from "dayjs";
+import type { QUnitType, OpUnitType } from "dayjs/esm";
 import type { Ref, ComputedRef, StyleValue } from "vue";
 import { WORDS, EXERCISE_SIZE } from "@/constants";
 import type { Word, WordExtra, Option, OptionExtra } from "@/types";
@@ -200,9 +200,10 @@ const processStyle = computed(() =>
         width: "100%",
       }
     : {
-        width: `${((processCurrent.value / account.value.key) * 100).toFixed(
-          2
-        )}%`,
+        width: `${(
+          (processCurrent.value / (account.value.key as number)) *
+          100
+        ).toFixed(2)}%`,
       }
 );
 // 题海
@@ -215,9 +216,9 @@ const allWords: ComputedRef<Word[]> = computed(() =>
         ],
         []
       )
-    : currentClassAndUnit.value.children[
-        currentClassAndUnit.value.selectedChildIndex
-      ].words
+    : (currentClassAndUnit.value?.children || [])[
+        currentClassAndUnit.value?.selectedChildIndex || 0
+      ]?.words || []
 );
 const exerciseSize = computed(() =>
   EXERCISE_SIZE.map((number) => ({
@@ -270,20 +271,20 @@ const rightRate: ComputedRef<string> = computed(() => {
 });
 // 计算用时
 const time: ComputedRef<string> = computed(() => {
-  const keys: Array<UnitType> = ["hour", "minute", "second"];
+  const keys: (QUnitType | OpUnitType)[] = ["hour", "minute", "second"];
   const diffTime = keys
-    .map((key: UnitType) => dayjs().diff(beginTime.value, key))
+    .map((key) => dayjs().diff(beginTime.value, key))
     .join(":");
   return dayjs(`${dayjs().format("YYYY-MM-DD")} ${diffTime}`).format(
     "HH小时mm分ss秒"
   );
 });
 
-const beginTime: Ref<Dayjs> = ref(dayjs());
+const beginTime = ref(dayjs());
 const showPlayground: Ref<boolean> = ref(false); // 是否显示练习界面
 const account: Ref<Option> = ref(exerciseSize.value[0]);
 const currentBook: Ref<Option> = ref(booksOption[0]); // 练习的课本
-const currentClassAndUnit: Ref<Option> = ref({});
+const currentClassAndUnit: Ref<Partial<Option & OptionExtra>> = ref({});
 const processCurrent: Ref<number> = ref(1); // 当前进度条显示的已练习的单词个数
 const questions: Ref<number[]> = ref([]); // 所有随机筛出来的题目索引
 const answers: Ref<string[]> = ref([]);
@@ -301,8 +302,8 @@ watch(showPlayground, (val) => {
     initDegreeData();
 
     if (!isInfinite.value) {
-      let count = account.value.key;
-      const map = [];
+      let count = account.value.key as number;
+      const map: number[] = [];
       while (count > 0) {
         const number = getRandomNum();
         if (
@@ -394,7 +395,7 @@ const handleNext = () => {
     );
 
     if (!isInfinite.value) {
-      if (processCurrent.value < account.value.key) {
+      if (processCurrent.value < (account.value.key as number)) {
         processCurrent.value += 1;
       } else {
         // 写入熟练度

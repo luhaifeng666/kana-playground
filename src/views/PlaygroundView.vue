@@ -198,7 +198,7 @@ const qTIndex = ref(0);
 // 答案类型索引
 const aTIndex = ref(0);
 // TODO: 计时
-const startTime = dayjs();
+// const startTime = dayjs();
 /**
  * TODO 模式设定 设置当前模式
  * havefun 练习模式
@@ -314,7 +314,7 @@ const handleNext = () => {
     secondShake.value = !secondIsRight.value;
     // 错误计数
     firstErrorTime.value += 1;
-    if (secondInputVisible) secondErrorTime.value += 1;
+    if (secondInputVisible.value) secondErrorTime.value += 1;
     const timer = setTimeout(() => {
       firstShake.value = secondShake.value = false;
       clearTimeout(timer);
