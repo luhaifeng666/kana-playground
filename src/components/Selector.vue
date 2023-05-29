@@ -35,13 +35,17 @@
         hover:text="green-400"
         v-for="option in options"
         :class="[
-          option.key === selectedOption.key ? 'text-green-400' : '',
+          option.key === props.selectedOption.key ? 'text-green-400' : '',
           'relative',
         ]"
         :key="option.key"
         @click="handleSelect(option)"
       >
-        <p class="flex" items="center" justify="between">
+        <p
+          class="flex"
+          items="center"
+          :justify="tree && option.children?.length ? 'between' : 'center'"
+        >
           {{ option.value }}
           <chevron-right
             v-if="tree && option.children?.length"

@@ -1,11 +1,11 @@
 [package]
-name = "kanaPlayground"
+name = "kana_playground"
 version = "0.1.0"
 description = "一个练习假名的App"
 authors = ["you"]
 license = ""
 repository = ""
-default-run = "kanaPlayground"
+default-run = "kana_playground"
 edition = "2021"
 rust-version = "1.59"
 

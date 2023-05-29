@@ -1,8 +1,8 @@
 /*
  * @Author: luhaifeng666 youzui@hotmail.com
  * @Date: 2023-02-24 15:23:26
- * @LastEditors: luhaifeng666
- * @LastEditTime: 2023-02-24 15:31:20
+ * @LastEditors: haifeng.lu
+ * @LastEditTime: 2023-05-30 00:28:07
  * @Description:
  */
 
@@ -50,9 +50,10 @@ export const getClassesAndUnits = (params: Option) => {
         map.get(classKey).children.push({
           key: `unit${unitKey}`,
           value: `第${parseInt(unitKey)}单元`,
-          words: words.filter((word) =>
-            word.from.includes(`${classKey}-${unitKey}`)
-          ),
+          words: words.filter((word) => {
+            const rule = new RegExp(`^${classKey}-${unitKey}`)
+            return rule.test(word.from)
+          }),
         });
         return map;
       }, new Map())
