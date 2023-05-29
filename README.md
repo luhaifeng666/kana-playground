@@ -6,9 +6,9 @@
  * @Description: 
 -->
 
-<p align="center">
+<h1 align="center">
   <img width=100 src="https://user-images.githubusercontent.com/9375823/221082826-3d3956df-d400-4cc6-a884-e5129418242c.png" />
-<p>
+<h1>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Vue-%5E3.2.45-green" />
@@ -18,7 +18,7 @@
 
 <h1 align="center">Kana-playground</h1>
 
-<p align="center">一个练习平假名/片假名/罗马音的地儿~</p>
+<p align="center">一个练习平假名/片假名/罗马音/单词的地儿~</p>
 
 > PS: 有使用不便，或者 Bug 啥的，欢迎提 Issue~
 

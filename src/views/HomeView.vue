@@ -13,7 +13,7 @@
     </p>
     <p>
       一个练习<span class="text-green-400 font-bold mx-1"
-        >平假名/片假名/罗马音</span
+        >平假名/片假名/罗马音/单词</span
       >的地儿
     </p>
   </main>

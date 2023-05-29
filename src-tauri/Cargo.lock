@@ -1202,7 +1202,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "kanaPlayground"
+name = "kana_playground"
 version = "0.1.0"
 dependencies = [
  "serde",
