@@ -71,7 +71,7 @@
 import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 import { ChevronRight } from "lucide-vue-next";
 import type { Ref } from "vue";
-import { Option, OptionExtra } from "@/type";
+import { Option, OptionExtra } from "@/types";
 import { isEmpty } from "@/utils";
 
 onMounted(() => {
