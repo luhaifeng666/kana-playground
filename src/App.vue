@@ -13,9 +13,9 @@
     <header
       class="flex items-center justify-between text-white py-8 flex-shrink-0 w-full"
     >
-      <RouterLink to="/" class="text-2xl"
-        >Ka<span class="text-green-400">na</span></RouterLink
-      >
+      <RouterLink to="/" class="text-2xl">
+        Ka<span class="text-green-400">na</span>
+      </RouterLink>
       <nav class="flex items-center text-sm">
         <component
           v-for="(item, index) in links"
@@ -31,7 +31,7 @@
           }"
         >
           <template v-if="!item.isNormal">
-            {{ item.text }}
+            <span>{{ $t(item.lang) }}</span>
           </template>
 
           <Github :size="20" v-else></Github>
@@ -41,7 +41,7 @@
 
     <RouterView class="flex-shrink-1 flex-grow-1 basis-auto"></RouterView>
 
-    <Footer class="text-white flex-shrink-0 py-8 w-full" />
+    <Footer class="text-white flex-shrink-0 py-8 w-full"></Footer>
   </div>
 </template>
 
@@ -50,10 +50,12 @@ import { onBeforeMount } from "vue";
 import dayjs from "dayjs";
 import { RouterLink, RouterView, useRoute } from "vue-router";
 import { Github } from "lucide-vue-next";
+import { useI18n } from "vue-i18n";
 import Footer from "@/components/Footer.vue";
 import { MENU_ITEMS } from "@/constants";
 
 const route = useRoute();
+const { t } = useI18n();
 //  链接样式
 const LINK_STYLE = ["ml-4", "hover:text-green-400"];
 //  链接定义

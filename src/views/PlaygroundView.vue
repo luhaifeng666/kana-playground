@@ -97,14 +97,7 @@
         >{{ aTypes[aTIndex].name }}</strong
       >
     </p>
-    <p text="zinc-500 xs" mt="2" mb="6">
-      Tips: 可通过按下键盘的
-      <span border="rounded" p="1" bg="zinc-900" text="xs green-400"
-        >Enter</span
-      >
-      键切换下一个；点击上述内容中的
-      <strong text="green-400">绿色字体</strong> 可以切换练习模式哦~
-    </p>
+    <p text="zinc-500 xs" mt="2" mb="6" v-html="$t('kanaPlayground.tips')"></p>
 
     <template v-if="!processVisible">
       <div class="flex-center flex-col cursor-pointer" @click="handleNext">
@@ -142,6 +135,7 @@ import {
 import type { Ref } from "vue";
 import type { Kana, RecordData } from "@/types";
 import dayjs from "dayjs";
+import { useI18n } from "vue-i18n";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-vue-next";
 import { KANA, DULL, AO, AO_DULL, PATTERN } from "@/constants";
 import { isEmpty } from "@/utils";
@@ -172,6 +166,7 @@ onBeforeUnmount(() => {
   localStorage.setItem("kanaRecord", JSON.stringify(localData.recordData));
 });
 
+const { t } = useI18n();
 // 定义抽取的个数
 const count: Ref<number> = ref(0);
 // 所有的假名

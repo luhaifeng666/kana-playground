@@ -6,6 +6,8 @@
  * @Description:
  */
 import { createApp } from "vue";
+import { createI18n } from "vue-i18n";
+import { en, zh } from "./languages";
 import "virtual:windi.css";
 
 import App from "./App.vue";
@@ -13,8 +15,19 @@ import router from "./router";
 
 import "./assets/main.css";
 
+const i18n = createI18n({
+  locale: "zh",
+  allowComposition: true,
+  // fallbackLocale: "en",
+  messages: {
+    en,
+    zh,
+  },
+});
+
 const app = createApp(App);
 
 app.use(router);
+app.use(i18n);
 
 app.mount("#app");

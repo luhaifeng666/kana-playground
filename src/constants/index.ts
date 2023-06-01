@@ -11,10 +11,34 @@ import { ZR_FIRST_BOOK_WORDS } from "./words";
 
 //  定义菜单项
 export const MENU_ITEMS = [
-  { text: "卷假名", link: "/playground", isNormal: false, name: "playground" },
-  { text: "卷单词", link: "/tango", isNormal: false, name: "tango" },
-  { text: "音图", link: "/kana", isNormal: false, name: "kana" },
-  { text: "记录", link: "/record", isNormal: false, name: "record" },
+  {
+    text: "卷假名",
+    link: "/playground",
+    isNormal: false,
+    name: "playground",
+    lang: "menu.kana",
+  },
+  {
+    text: "卷单词",
+    link: "/tango",
+    isNormal: false,
+    name: "tango",
+    lang: "menu.tango",
+  },
+  {
+    text: "音图",
+    link: "/kana",
+    isNormal: false,
+    name: "kana",
+    lang: "menu.map",
+  },
+  {
+    text: "记录",
+    link: "/record",
+    isNormal: false,
+    name: "record",
+    lang: "menu.record",
+  },
   {
     text: "",
     link: "https://github.com/luhaifeng666/kana-playground",
