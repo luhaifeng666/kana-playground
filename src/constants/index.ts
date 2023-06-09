@@ -7,7 +7,7 @@
  */
 
 import type { Kana } from "@/types";
-import { ZR_FIRST_BOOK_WORDS } from "./words";
+import { ZR_FIRST_BOOK_WORDS, ZR_SECOND_BOOK_WORDS, ZR_THIRD_BOOK_WORDS } from "./words";
 
 //  定义菜单项
 export const MENU_ITEMS = [
@@ -182,6 +182,8 @@ export const WEEK_NAMES = [
 // 定义单词
 export const WORDS = {
   zrFirst: { name: "综合日本语第一册", words: ZR_FIRST_BOOK_WORDS },
+  zrSecond: { name: "综合日本语第二册", words: ZR_SECOND_BOOK_WORDS },
+  zrThird: { name: "综合日本语第三册", words: ZR_THIRD_BOOK_WORDS },
 };
 
 // 定义练习的个数
